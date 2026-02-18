@@ -1,0 +1,183 @@
+/* CSS Reset & Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Local Fonts */
+@font-face {
+  font-family: 'PP Mori';
+  src: url('../fonts/ppmori-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Mori';
+  src: url('../fonts/ppmori-regular.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Mori';
+  src: url('../fonts/ppmori-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Benzin';
+  src: url('../fonts/benzin-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Colors from Figma */
+  --bg-main: #191919;
+  --bg-card: #1F1F1F;
+  --bg-darker: #151515;
+  --gradient-orange: linear-gradient(90deg, #FFD58A 0%, #FFA92C 100%);
+  --orange-light: #FFD58A;
+  --orange-dark: #FFA92C;
+  --text-white: #FFFFFF;
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --text-dimmed: rgba(255, 255, 255, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* CRITICAL FIX: Ensure full viewport width for blob positioning */
+html {
+  overflow-x: clip; /* clip, не hidden — не создаёт stacking context */
+  overflow-y: scroll; /* Reserve scrollbar space */
+}
+
+body {
+  font-family: 'PP Mori', sans-serif;
+  background: var(--bg-main);
+  color: var(--text-white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* Full viewport width */
+  overflow-x: clip;
+}
+
+/* CRITICAL FIX: App wrapper must use viewport width, not percentage */
+#app {
+  overflow-x: clip;
+  width: 100vw; /* ← БЫЛО 100%, ТЕПЕРЬ 100vw для blob */
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Common utility classes */
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* On very wide screens keep content centered without extra padding */
+@media (min-width: 1280px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
+/* Button styles */
+.btn {
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-white);
+}
+
+.btn-outline:hover {
+  border-color: var(--orange-dark);
+  background: rgba(255, 169, 44, 0.1);
+}
+
+.btn-primary {
+  background: var(--gradient-orange);
+  color: #000000;
+  border: none;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-large {
+  padding: 16px 40px;
+  font-size: 16px;
+}
+
+/* Section common styles */
+.section {
+  padding: 100px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.section-title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-subtitle {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Responsive typography */
+@media (max-width: 968px) {
+  .section-title {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-title {
+    font-size: 28px;
+  }
+  
+  .section-subtitle {
+    font-size: 16px;
+  }
+}
