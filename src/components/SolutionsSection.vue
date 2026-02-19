@@ -638,6 +638,10 @@ onUnmounted(() => {
   opacity: 1;
 }
 
+.solution-card:hover::before {
+  opacity: 1;
+}
+
 .card-image {
   width: 100%;
   height: 240px;
@@ -675,6 +679,13 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.7);
   position: relative;
   z-index: 1;
+}
+
+@media (min-width: 1440px) {
+  .solution-card {
+    padding: 30px 24px 24px 30px;
+    gap: 20px;
+  }
 }
 
 @media (max-width: 1280px) {

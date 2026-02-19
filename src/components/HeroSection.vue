@@ -21,10 +21,11 @@
           Подробнее о нас
         </button>
       </div>
-      
-      <div class="dashboard-wrapper">
-        <img src="/src/assets/images/hero-panel.png" alt="Dashboard" class="dashboard-img" loading="lazy" />
-      </div>
+    </div>
+    
+    <!-- Dashboard вынесен ИЗ container для правильного z-index -->
+    <div class="dashboard-wrapper">
+      <img src="/src/assets/images/hero-panel.png" alt="Dashboard" class="dashboard-img" loading="lazy" />
     </div>
   </section>
 </template>
@@ -63,7 +64,7 @@ import DotsPlane from './DotsPlane.vue'
 
 .container {
   position: relative;
-  z-index: 2;
+  z-index: 3; /* Выше aurora (1), выше dashboard (0), выше dots (-1) */
   pointer-events: none;
 }
 
@@ -73,7 +74,9 @@ import DotsPlane from './DotsPlane.vue'
 }
 
 .dashboard-wrapper {
-  pointer-events: none; /* Картинка не блокирует */
+  pointer-events: none;
+  position: relative;
+  z-index: 0; /* Ниже aurora (1), ниже container (3), выше dots (-1) */
 }
 
 /* Текст не блокирует - эффект виден за ним */
@@ -117,7 +120,7 @@ import DotsPlane from './DotsPlane.vue'
   display: flex;
   gap: 16px;
   justify-content: center;
-  margin-bottom: 69px;
+  margin-bottom: 0; /* ← Убрали, теперь dashboard вне container */
 }
 
 .btn {
@@ -149,9 +152,64 @@ import DotsPlane from './DotsPlane.vue'
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 213, 138, 0.2);
+  border: none;
   backdrop-filter: blur(10px);
   color: #FFD58A;
+  position: relative;
+  border-radius: 48px;
+  overflow: hidden;
+}
+
+/* Gradient border для btn-secondary */
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 0.12rem;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 213, 138, 0.2) 20%,
+    #FFA92C 50%,
+    rgba(255, 213, 138, 0.2) 80%,
+    transparent 100%
+  );
+
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+
+  pointer-events: none;
+  z-index: 0;
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* ХОВЕР */
+.btn-secondary:hover::before {
+  opacity: 1;
+  animation: borderRun 2s linear infinite;
+}
+
+@keyframes borderRun {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 300% 50%;
+  }
 }
 
 .btn-secondary:hover {
@@ -165,7 +223,11 @@ import DotsPlane from './DotsPlane.vue'
 
 .dashboard-wrapper {
   max-width: 1050px;
-  margin: 0 auto;
+  margin: 69px auto 0;
+  padding: 0 20px;
+  position: relative;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .dashboard-img {
@@ -174,6 +236,37 @@ import DotsPlane from './DotsPlane.vue'
   display: block;
   border-radius: 24px;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+  /* Fade маски для плавного перехода на краях */
+  -webkit-mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  ),
+  linear-gradient(
+    to right,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  );
+  -webkit-mask-composite: source-in;
+  mask: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  ),
+  linear-gradient(
+    to right,
+    transparent 0%,
+    black 3%,
+    black 97%,
+    transparent 100%
+  );
+  mask-composite: intersect;
 }
 
 /* Tablet landscape */

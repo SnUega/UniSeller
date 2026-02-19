@@ -364,16 +364,11 @@ onUnmounted(() => {
   gap: 20px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
+  position: relative; /* ← Для ::before */
 }
 
-/* Cards with gradient border (1 and 4) — glass + gradient border via pseudo-element */
-.feature-card.with-border {
-  position: relative;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-}
-
-.feature-card.with-border::before {
+/* Градиентная рамка для ВСЕХ карточек при hover */
+.feature-card::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -392,13 +387,18 @@ onUnmounted(() => {
   mask-composite: exclude;
   pointer-events: none;
   z-index: 0;
-  opacity: 0; /* ← Скрыт по умолчанию */
+  opacity: 0; /* Скрыт по умолчанию */
   transition: opacity 0.3s ease;
 }
 
 /* Градиент появляется при hover */
-.feature-card.with-border:hover::before {
+.feature-card:hover::before {
   opacity: 1;
+}
+
+/* Cards with gradient border (1 and 4) — НЕ НУЖНО, теперь все карточки одинаковые */
+.feature-card.with-border {
+  /* Убираем дублирование стилей */
 }
 
 .feature-icon {

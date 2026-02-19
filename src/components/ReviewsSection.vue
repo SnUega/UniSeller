@@ -381,20 +381,40 @@ onUnmounted(() => {
   padding: 28px 24px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px); /* Для Safari */
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 28px;
   position: relative;
-  z-index: 102; /* Above blob (z-index: 101) */
-  /* Предотвращение глитча при анимации */
-  /* Убираем transform: translateZ(0), так как он может блокировать backdrop-filter */
+  z-index: 102;
   backface-visibility: hidden;
-  /* Border transition */
   transition: background 0.4s;
-
 }
+
+/* Градиентная рамка при hover */
+.review-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: 
+    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
+    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.review-card:hover::before {
+  opacity: 1;
+}
+
 
 @media (max-width: 640px) {
   .review-card {

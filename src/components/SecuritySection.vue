@@ -63,16 +63,11 @@
   gap: 16px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
+  position: relative; /* ← Для ::before */
 }
 
-/* With-border card — same pseudo-element technique as CRM */
-.security-card.with-border {
-  position: relative;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-}
-
-.security-card.with-border::before {
+/* Градиентная рамка для ВСЕХ карточек при hover */
+.security-card::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -85,6 +80,18 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.security-card:hover::before {
+  opacity: 1;
+}
+
+/* With-border class больше не нужен — все карточки одинаковые */
+.security-card.with-border {
+  /* Убрали дублирование */
 }
 
 .security-icon {

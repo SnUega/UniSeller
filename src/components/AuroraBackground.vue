@@ -215,7 +215,7 @@ onMounted(() => {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 0;
+  z-index: 1; /* Выше dashboard (0), ниже текста и кнопок (3), выше dots (-1) */
   pointer-events: none;
 }
 

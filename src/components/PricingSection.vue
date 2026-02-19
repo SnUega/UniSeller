@@ -329,7 +329,8 @@ onUnmounted(() => {
   background: transparent;
   position: relative;
   width: 100%;
-  z-index: 10; /* ← ВЫШЕ blob (z-index: 0) */
+  /* Убрали z-index: 10, чтобы не создавать новый stacking context */
+  /* Теперь card-top (z:2) и features-list (z:1) конкурируют с blob (z:0) напрямую */
 }
 
 /* Cards 1 and 4 - total height 577px (233 top + 344 bottom) */
@@ -508,24 +509,67 @@ onUnmounted(() => {
 }
 
 /* Gradient border for cards 1 and 4 */
+.btn-try.basic,
+.btn-try.mega {
+  position: relative;
+  border-radius: 2.4rem;
+  overflow: hidden;
+}
+
 .btn-try.basic::before,
 .btn-try.mega::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 38px;
-  padding: 2px;
-  background:
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  border-radius: inherit;
+  padding: 0.12rem;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 213, 138, 0.2) 20%,
+    #FFA92C 50%,
+    rgba(255, 213, 138, 0.2) 80%,
+    transparent 100%
+  );
+
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
   mask-composite: exclude;
+
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
+/* ХОВЕР */
+.btn-try.basic:hover::before,
+.btn-try.mega:hover::before {
+  opacity: 1;
+  animation: borderRun 2s linear infinite;
+}
+
+@keyframes borderRun {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 300% 50%;
+  }
+}
+
+/* Hover эффект для всех кнопок */
 .btn-try:hover { 
   background: rgba(255, 255, 255, 0.15);
 }
@@ -536,33 +580,40 @@ onUnmounted(() => {
   width: 235.25px;
   height: 56px;
   border-radius: 48px;
-  background: linear-gradient(90deg, #FFD58A 0%, #FFA92C 100%);
+  background: linear-gradient(90deg, #FFD58A 0%, #FFA92C 50%, #FFD58A 100%);
+  background-size: 200% 100%;
   border: 2px solid #FFD58A;
   box-shadow: 0px 0px 38px rgba(0, 0, 0, 0.25), 0px 0px 74px #FFA92C;
   color: rgba(0, 0, 0, 0.8);
   backdrop-filter: none;
+  transition: all 0.3s ease;
 }
 
 .btn-try.popular:hover,
 .btn-try.highlighted:hover {
-  transform: translateY(-1px);
-  box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.3), 0px 0px 80px #FFA92C;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 60px rgba(255, 169, 44, 0.6),
+    0 0 100px rgba(255, 169, 44, 0.4),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: gradientShift 3s ease infinite;
 }
 
 .features-list {
   list-style: none;
   padding: 60px 30px 30px;
   margin: 0;
-  margin-top: -24px; /* Overlap with top section */
+  margin-top: -24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   position: relative;
-  z-index: 1; /* Below top section */
-  background: rgba(255, 255, 255, 0.03);
+  z-index: 1;
+  background: #FFFFFF08; 
+  backdrop-filter: blur(8px);
   border-radius: 0 0 24px 24px;
-  min-height: 344px; /* Same for all cards */
-  padding-top: calc(60px + 24px); /* Extra padding to account for overlap */
+  min-height: 344px;
+  padding-top: calc(60px + 24px);
 }
 
 .features-list li {

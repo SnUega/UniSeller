@@ -178,7 +178,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 24px; /* ← БЫЛО 25px, СТАЛО 24px */
+  gap: clamp(24px, 2vw, 36px); /* Адаптивный */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1001;
@@ -198,7 +198,7 @@ onUnmounted(() => {
 
 .nav-menu {
   display: flex;
-  gap: 16px; /* ← БЫЛО 32px, СТАЛО 16px */
+  gap: clamp(16px, 1.4vw, 24px); /* Адаптивный */
   list-style: none;
   margin: 0;
   padding: 0;

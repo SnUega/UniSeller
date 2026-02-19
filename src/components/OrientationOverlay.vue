@@ -138,11 +138,12 @@ watch([isTabletPortrait, isPhoneLandscape], ([tablet, phone]) => {
   width: 100% !important;
   height: 100% !important;
   max-height: none !important;
+  z-index: 1 !important; /* Выше фона, ниже контента (z-index: 10) */
 }
 
-/* DotsPlane in overlay */
+/* DotsPlane in overlay - ниже Aurora */
 .orient-overlay__bg .dots-canvas {
-  z-index: 1;
+  z-index: 0 !important; /* Ниже Aurora (1), но выше фона */
 }
 
 /* Content layer */
