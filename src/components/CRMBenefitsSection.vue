@@ -11,7 +11,7 @@
     </div>
 
     <div class="container">
-      <h2 class="section-title">Как наша CRM-система меняет<br>ваш рабочий процесс</h2>
+      <h2 class="section-title" ref="titleRef">Как наша CRM-система меняет<br>ваш рабочий процесс</h2>
 
       <!-- Dashed logo decoration - desktop only -->
       <div class="dashed-logo-deco" :class="{ 'animate': animateDeco }">
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Features grid -->
-      <div class="features-grid">
+      <div class="features-grid" ref="featuresGridRef">
         <!-- Card 1 - with border -->
         <div class="feature-card card-glow-border">
           <img src="/src/assets/images/ico/codicon_settings.svg" alt="" class="feature-icon" loading="lazy" />
@@ -61,8 +61,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateCenterTitle, animateBubbleCards } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const featuresGridRef = ref(null)
 
 useCardGlow({
   cardSelector: '.feature-card',
@@ -152,6 +155,12 @@ onMounted(() => {
   window.addEventListener('scroll', throttledScroll, { passive: true })
   window.addEventListener('resize', throttledResize, { passive: true })
   handleScroll()
+
+  animateCenterTitle(titleRef.value)
+  if (featuresGridRef.value) {
+    const cards = featuresGridRef.value.querySelectorAll('.feature-card')
+    animateBubbleCards([...cards], { triggerEl: featuresGridRef.value })
+  }
 })
 
 onUnmounted(() => {

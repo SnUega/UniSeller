@@ -1,9 +1,9 @@
 <template>
   <section class="security" ref="sectionRef">
     <div class="container">
-      <h2 class="section-title">Обеспечиваем безопасную работу<br>с вашими данными</h2>
+      <h2 class="section-title" ref="titleRef">Обеспечиваем безопасную работу<br>с вашими данными</h2>
 
-      <div class="security-grid">
+      <div class="security-grid" ref="securityGridRef">
         <div class="security-card card-glow-border">
           <img src="/src/assets/images/ico/ri_shield-fill.svg" alt="" class="security-icon" loading="lazy" />
           <h3 class="security-title">Контроль 24/7</h3>
@@ -27,10 +27,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateCenterTitle, animateBubbleStagger } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const securityGridRef = ref(null)
+
+onMounted(() => {
+  animateCenterTitle(titleRef.value)
+  if (securityGridRef.value) {
+    const cards = securityGridRef.value.querySelectorAll('.security-card')
+    animateBubbleStagger([...cards], { triggerEl: securityGridRef.value })
+  }
+})
 
 useCardGlow({
   cardSelector: '.security-card',

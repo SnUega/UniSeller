@@ -10,11 +10,11 @@
     <DotsPlane />
     
     <div class="container">
-      <p class="hero-subtitle">АВТОМАТИЗАЦИЯ БИЗНЕСА НА МАРКЕТПЛЕЙСАХ</p>
-      <h1 class="hero-title">Платформа<br>для продвижения и управления<br>бизнесом на маркетплейсах</h1>
-      <p class="hero-description">Уникальный инструмент, способный объединить в одном<br>окне управление продажами на всех доступных маркетплейсах.</p>
+      <p class="hero-subtitle" ref="heroSubtitle">АВТОМАТИЗАЦИЯ БИЗНЕСА НА МАРКЕТПЛЕЙСАХ</p>
+      <h1 class="hero-title" ref="heroTitle">Платформа<br>для продвижения и управления<br>бизнесом на маркетплейсах</h1>
+      <p class="hero-description" ref="heroDescription">Уникальный инструмент, способный объединить в одном<br>окне управление продажами на всех доступных маркетплейсах.</p>
       
-      <div class="hero-buttons">
+      <div class="hero-buttons" ref="heroButtons">
         <button class="btn btn-primary">Начать бесплатно</button>
         <button class="btn btn-secondary">
           <img src="/src/assets/images/ico/solar_play-bold.svg" alt="" class="play-icon" loading="lazy" />
@@ -31,8 +31,24 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import AuroraBackground from './AuroraBackground.vue'
 import DotsPlane from './DotsPlane.vue'
+import { animateHeroCascade } from '../composables/useScrollAnimations.js'
+
+const heroSubtitle = ref(null)
+const heroTitle = ref(null)
+const heroDescription = ref(null)
+const heroButtons = ref(null)
+
+onMounted(() => {
+  animateHeroCascade([
+    heroSubtitle.value,
+    heroTitle.value,
+    heroDescription.value,
+    heroButtons.value,
+  ])
+})
 </script>
 
 <style scoped>
@@ -71,6 +87,7 @@ import DotsPlane from './DotsPlane.vue'
 /* Включаем pointer-events только для интерактивных элементов */
 .hero-buttons {
   pointer-events: auto;
+  /* opacity управляется через GSAP — не переопределяем здесь */
 }
 
 .dashboard-wrapper {
@@ -82,9 +99,11 @@ import DotsPlane from './DotsPlane.vue'
 /* Текст не блокирует - эффект виден за ним */
 .hero-subtitle,
 .hero-title,
-.hero-description {
+.hero-description,
+.hero-buttons {
   pointer-events: none;
-  user-select: none; /* Нельзя выделить текст */
+  user-select: none;
+  opacity: 0; /* Начальное состояние — невидимо, GSAP анимирует до 1 */
 }
 
 .hero-subtitle {

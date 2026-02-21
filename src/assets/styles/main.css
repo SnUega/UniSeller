@@ -243,3 +243,37 @@ svg {
   opacity: 1;
   transition: opacity 0.3s ease;
 }
+
+/* ============================================================
+   Locked glow state (click/tap на карточку)
+   ============================================================ */
+.card-glow-border.glow-locked::after {
+  opacity: 1;
+  /* Если курсор не над карточкой — держим glow по центру на полной яркости */
+  --glow-intensity: 0.7;
+}
+
+/* Плавный переход — background анимируется через opacity слоя */
+.card-glow-border::after {
+  transition: opacity 0.35s ease;
+}
+
+/* ============================================================
+   Form inputs — focus/active стиль с акцентной рамкой
+   ============================================================ */
+.input-glow-wrap:focus-within {
+  --glow-intensity: 0.6;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-radius: 400px;
+}
+
+.input-glow-wrap:focus-within .form-input {
+  border-color: rgba(255, 169, 44, 0.5);
+  box-shadow: 0 0 0 1px rgba(255, 169, 44, 0.2);
+}
+
+/* check-icon — изначально скрыты для анимации */
+.check-icon {
+  transform-origin: center;
+}

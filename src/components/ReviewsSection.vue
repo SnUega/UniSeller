@@ -9,7 +9,7 @@
 
     <div class="container">
       <div class="reviews-header">
-        <h2 class="section-title">Отзывы</h2>
+        <h2 class="section-title" ref="titleRef">Отзывы</h2>
         <div class="slider-nav">
           <button @click="prevSlide" class="nav-btn" :disabled="currentSlide === 0">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-prev" loading="lazy" />
@@ -26,6 +26,7 @@
       <div class="slider-inner-pad">
         <div
           class="slider-track"
+          ref="reviewsSliderTrackRef"
           :style="{ transform: isMobile ? `translateX(calc(-${currentSlide * 100}% - ${currentSlide * 16}px))` : `translateX(-${currentSlide * (cardWidth + gap)}px)` }"
           :class="{ 'mobile-track': isMobile }"
         >
@@ -62,10 +63,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateTitleFromRight, animateBubbleStagger } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const reviewsSliderTrackRef = ref(null)
 
 useCardGlow({
   cardSelector: '.review-card',
@@ -145,8 +149,16 @@ const maxSlide = computed(() => {
   return Math.max(0, reviews.length - visibleCards)
 })
 
-const nextSlide = () => { if (currentSlide.value < maxSlide.value) currentSlide.value++ }
-const prevSlide = () => { if (currentSlide.value > 0) currentSlide.value-- }
+const nextSlide = () => {
+  if (currentSlide.value < maxSlide.value) {
+    currentSlide.value++
+  }
+}
+const prevSlide = () => {
+  if (currentSlide.value > 0) {
+    currentSlide.value--
+  }
+}
 
 // Touch swipe
 let touchStartX = 0
@@ -217,7 +229,6 @@ onMounted(() => {
   if (sectionRef.value) {
     sectionTop.value = sectionRef.value.offsetTop
   }
-  // На мобильных не добавляем scroll listener для параллакса
   if (!isMobileForParallax.value) {
     window.addEventListener('scroll', throttledScroll, { passive: true })
   }
@@ -229,6 +240,13 @@ onMounted(() => {
     el.addEventListener('touchstart', onTouchStart, { passive: true })
     el.addEventListener('touchmove', onTouchMove, { passive: false })
     el.addEventListener('touchend', onTouchEnd, { passive: true })
+  }
+
+  // Scroll animations
+  animateTitleFromRight(titleRef.value)
+  if (reviewsSliderTrackRef.value) {
+    const cards = reviewsSliderTrackRef.value.querySelectorAll('.review-card')
+    animateBubbleStagger([...cards].slice(0, 3), { triggerEl: sectionRef.value })
   }
 })
 
@@ -360,12 +378,12 @@ onUnmounted(() => {
 .slider-track {
   display: flex;
   gap: 24px;
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Spring-like easing — небольшой overshoot при смене слайда */
+  transition: transform 0.65s cubic-bezier(0.34, 1.3, 0.64, 1);
   will-change: transform;
-  transform: translateZ(0); /* Аппаратное ускорение */
-  backface-visibility: hidden; /* Устраняет мерцание */
-  contain: layout style; /* Оптимизация рендеринга, убираем paint для backdrop-filter */
-  /* Исправление: на мобильных не используем contain */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style;
 }
 
 @media (max-width: 640px) {
@@ -396,13 +414,21 @@ onUnmounted(() => {
   position: relative;
   z-index: 102;
   backface-visibility: hidden;
-  transition: background 0.4s;
+  transition: background 0.4s,
+              transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+              opacity 0.4s ease,
+              filter 0.4s ease;
 }
 
-/* Градиентная рамка — теперь через .card-glow-border::after (useCardGlow) */
-/* Активная карточка слайдера — усиленный glow */
+/* Активная карточка — немного крупнее и ярче */
 .review-card.active {
   --glow-intensity: 0.85;
+  transform: scale(1.02);
+  filter: brightness(1.06);
+}
+.review-card:not(.active) {
+  opacity: 0.72;
+  filter: brightness(0.82);
 }
 
 @media (max-width: 640px) {

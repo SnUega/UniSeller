@@ -8,10 +8,10 @@
     </div>
 
     <div class="container">
-      <h2 class="section-title">Выберите подходящий<br>план для вашего бизнеса</h2>
+      <h2 class="section-title" ref="titleRef">Выберите подходящий<br>план для вашего бизнеса</h2>
 
       <!-- Desktop grid -->
-      <div class="pricing-grid desktop-grid">
+      <div class="pricing-grid desktop-grid" ref="pricingGridRef">
         <div v-for="(plan, i) in plans" :key="i" class="pricing-card" :class="plan.type">
           <div class="card-top card-glow-border">
             <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
@@ -96,8 +96,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateCenterTitle, animateSlideUp, animatePricingFeatures } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const pricingGridRef = ref(null)
 
 useCardGlow({
   cardSelector: '.card-top',
@@ -265,7 +268,6 @@ onMounted(() => {
   if (sectionRef.value) {
     sectionTop.value = sectionRef.value.offsetTop
   }
-  // На мобильных не добавляем scroll listener для параллакса
   if (!isMobile.value) {
     window.addEventListener('scroll', throttledScroll, { passive: true })
   }
@@ -277,6 +279,27 @@ onMounted(() => {
     sliderTrackEl.addEventListener('touchstart', onTouchStart, { passive: true })
     sliderTrackEl.addEventListener('touchmove', onTouchMove, { passive: false })
     sliderTrackEl.addEventListener('touchend', onTouchEnd, { passive: true })
+  }
+
+  // Scroll animations — только для десктопа
+  if (!isMobile.value && pricingGridRef.value) {
+    animateCenterTitle(titleRef.value)
+
+    const cards = [...pricingGridRef.value.querySelectorAll('.pricing-card')]
+    // Карточки 2 и 3 (индексы 1,2) первые, затем 1 и 4 (индексы 0,3) с задержкой
+    const middle = [cards[1], cards[2]].filter(Boolean)
+    const outer  = [cards[0], cards[3]].filter(Boolean)
+
+    animateSlideUp(middle, { triggerEl: pricingGridRef.value })
+    animateSlideUp(outer,  { delay: 0.22, triggerEl: pricingGridRef.value })
+
+    // Анимация пунктов списка для каждой карточки
+    cards.forEach((card, i) => {
+      animatePricingFeatures(card, {
+        triggerEl: pricingGridRef.value,
+        baseDelay: (i === 1 || i === 2) ? 0.35 : 0.55,
+      })
+    })
   }
 })
 onUnmounted(() => {

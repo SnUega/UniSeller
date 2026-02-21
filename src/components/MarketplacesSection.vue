@@ -1,6 +1,6 @@
 <template>
   <section class="marketplaces">
-    <h2 class="section-title">Оптимизация продаж на всех маркетплейсах</h2>
+    <h2 class="section-title" ref="titleRef">Оптимизация продаж на всех маркетплейсах</h2>
     
     <div class="carousel">
       <div class="carousel-track">
@@ -14,6 +14,17 @@
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { animateCenterTitle } from '../composables/useScrollAnimations.js'
+
+const titleRef = ref(null)
+
+onMounted(() => {
+  animateCenterTitle(titleRef.value)
+})
+</script>
 
 <style scoped>
 .marketplaces {

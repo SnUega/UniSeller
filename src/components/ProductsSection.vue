@@ -8,12 +8,12 @@
     </div>
 
     <div class="container">
-      <h2 class="section-title">Продукты для роста вашего<br>бизнеса на маркетплейсах</h2>
+      <h2 class="section-title" ref="titleRef">Продукты для роста вашего<br>бизнеса на маркетплейсах</h2>
 
       <div class="products-grid">
 
         <!-- Product 1 - MPBalance -->
-        <div class="product-card card-glow-border">
+        <div class="product-card card-glow-border" ref="card1Ref">
           <!-- Gradient spots -->
           <div class="card-glow card-glow-left"></div>
           <div class="card-glow card-glow-right"></div>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Product 2 - Content Rating -->
-        <div class="product-card product-card-2 card-glow-border">
+        <div class="product-card product-card-2 card-glow-border" ref="card2Ref">
           <div class="card-glow card-glow-left"></div>
           <div class="card-glow card-glow-right"></div>
 
@@ -104,8 +104,12 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateCenterTitle, animateSlideFromRight, animateSlideFromLeft, animateFeatureItems } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const card1Ref = ref(null)
+const card2Ref = ref(null)
 
 useCardGlow({
   cardSelector: '.product-card',
@@ -167,12 +171,19 @@ onMounted(() => {
   if (sectionRef.value) {
     sectionTop.value = sectionRef.value.offsetTop
   }
-  // На мобильных не добавляем scroll listener для параллакса
   if (!isMobile.value) {
     window.addEventListener('scroll', throttledScroll, { passive: true })
   }
   window.addEventListener('resize', throttledResize, { passive: true })
   handleScroll()
+
+  // Scroll animations
+  animateCenterTitle(titleRef.value)
+  animateSlideFromRight(card1Ref.value, { triggerEl: card1Ref.value })
+  animateSlideFromLeft(card2Ref.value, { triggerEl: card2Ref.value })
+  // Пункты списка следуют направлению своей карточки
+  animateFeatureItems(card1Ref.value, { triggerEl: card1Ref.value, baseDelay: 0.3, direction: 'right' })
+  animateFeatureItems(card2Ref.value, { triggerEl: card2Ref.value, baseDelay: 0.3, direction: 'left' })
 })
 
 onUnmounted(() => {

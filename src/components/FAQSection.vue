@@ -11,9 +11,9 @@
     </div>
 
     <div class="container">
-      <h2 class="section-title">Ответы на наиболее часто<br>задаваемые вопросы</h2>
+      <h2 class="section-title" ref="titleRef">Ответы на наиболее часто<br>задаваемые вопросы</h2>
 
-      <div class="faq-list">
+      <div class="faq-list" ref="faqListRef">
         <div 
           v-for="(item, index) in faqItems" 
           :key="index"
@@ -58,8 +58,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateCenterTitle, animateBubbleStagger } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const faqListRef = ref(null)
 
 useCardGlow({
   cardSelector: '.faq-item',
@@ -309,6 +312,13 @@ onMounted(() => {
   document.addEventListener('touchend', handleTouchEnd, { passive: true })
   document.addEventListener('touchcancel', handleTouchEnd, { passive: true })
   animationId = requestAnimationFrame(draw)
+
+  // Scroll animations
+  animateCenterTitle(titleRef.value)
+  if (faqListRef.value) {
+    const items = faqListRef.value.querySelectorAll('.faq-item')
+    animateBubbleStagger([...items], { triggerEl: faqListRef.value })
+  }
 })
 
 onUnmounted(() => {

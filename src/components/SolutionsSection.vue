@@ -5,7 +5,7 @@
 
     <div class="container">
       <div class="solutions-header">
-        <h2 class="section-title">Решения для автоматизации<br>и продвижения бизнеса на маркетплейсах</h2>
+        <h2 class="section-title" ref="titleRef">Решения для автоматизации<br>и продвижения бизнеса на маркетплейсах</h2>
         <div class="slider-nav">
           <button @click="prevSlide" class="nav-btn" :disabled="currentSlide === 0" aria-label="Previous">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-prev" loading="lazy" />
@@ -22,6 +22,7 @@
       <div class="slider-inner-pad">
         <div
           class="slider-track"
+          ref="sliderTrackRef"
           :style="{ transform: `translateX(-${currentSlide * (cardWidth + gap)}px)` }"
         >
           <div
@@ -57,10 +58,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
+import { animateTitleFromRight, animateBubbleStagger } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
+const titleRef = ref(null)
+const sliderTrackRef = ref(null)
 
 useCardGlow({
   cardSelector: '.solution-card',
@@ -116,11 +120,15 @@ const maxSlide = computed(() => {
 const viewportW = ref(typeof window !== 'undefined' ? window.innerWidth : 1440)
 
 const nextSlide = () => {
-  if (currentSlide.value < maxSlide.value) currentSlide.value++
+  if (currentSlide.value < maxSlide.value) {
+    currentSlide.value++
+  }
 }
 
 const prevSlide = () => {
-  if (currentSlide.value > 0) currentSlide.value--
+  if (currentSlide.value > 0) {
+    currentSlide.value--
+  }
 }
 
 // Touch swipe for mobile slider
@@ -369,12 +377,19 @@ onMounted(() => {
     el.addEventListener('touchmove', onTouchMove, { passive: false })
     el.addEventListener('touchend', onTouchEnd, { passive: true })
   }
-  // Добавляем обработчики для мобильного слайдера
   const mobileEl = mobileSliderEl.value
   if (mobileEl) {
     mobileEl.addEventListener('touchstart', onTouchStart, { passive: true })
     mobileEl.addEventListener('touchmove', onTouchMove, { passive: false })
     mobileEl.addEventListener('touchend', onTouchEnd, { passive: true })
+  }
+
+  // Scroll animations
+  animateTitleFromRight(titleRef.value)
+  if (sliderTrackRef.value) {
+    const cards = sliderTrackRef.value.querySelectorAll('.solution-card')
+    // Анимируем первые видимые карточки (~2-3), stagger небольшой чтобы не наезжали
+    animateBubbleStagger([...cards].slice(0, 3), { triggerEl: sectionRef.value })
   }
 })
 
@@ -553,10 +568,26 @@ onUnmounted(() => {
 .slider-track {
   display: flex;
   gap: 24px;
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateZ(0); /* Аппаратное ускорение */
-  backface-visibility: hidden; /* Устраняет мерцание */
-  contain: layout style; /* Оптимизация рендеринга, убираем paint для backdrop-filter */
+  /* Spring-like easing — небольшой overshoot при смене слайда */
+  transition: transform 0.65s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style;
+}
+
+/* Активная карточка чуть выделяется масштабом и яркостью */
+.solution-card {
+  transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+              opacity 0.4s ease,
+              filter 0.4s ease;
+}
+.solution-card.active {
+  transform: scale(1.02);
+  filter: brightness(1.06);
+}
+.solution-card:not(.active) {
+  opacity: 0.75;
+  filter: brightness(0.85);
 }
 
 /* Mobile slider base styles */
