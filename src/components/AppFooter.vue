@@ -125,6 +125,8 @@
               class="btn-submit-wrapper"
               @mouseenter="showHint = true"
               @mouseleave="showHint = false"
+              @touchstart.prevent="!isFormValid && (showHint = true)"
+              @touchend="setTimeout(() => showHint = false, 2500)"
             >
               <button 
                 class="btn-submit" 
@@ -1045,22 +1047,22 @@ onUnmounted(() => {
 
 .hint-fade-enter-from {
   opacity: 0;
-  transform: translateY(6px);
+  margin-bottom: -6px;
 }
 
 .hint-fade-enter-to {
   opacity: 1;
-  transform: translateY(0);
+  margin-bottom: 0px;
 }
 
 .hint-fade-leave-from {
   opacity: 1;
-  transform: translateY(0);
+  margin-bottom: 0px;
 }
 
 .hint-fade-leave-to {
   opacity: 0;
-  transform: translateY(-4px);
+  margin-bottom: 4px;
 }
 
 .submit-hint::after {
@@ -1283,12 +1285,16 @@ onUnmounted(() => {
   .cta-title { font-size: 22px; }
   .form-grid { grid-template-columns: 1fr; }
   
-  /* Центрирование tooltip на мобильных */
+  /* Tooltip на мобильных — поверх всего, по центру кнопки */
   .submit-hint {
     left: 50%;
     transform: translateX(-50%);
     max-width: 280px;
+    z-index: 9999;
+    bottom: calc(100% + 16px);
   }
+
+  /* Стрелочка тоже центруется автоматически через left:50% выше */
   
   /* Порядок на мобильных: Заголовок → Форма → Соц.кнопки → Адрес → Сколково */
   .footer-top-inner {
