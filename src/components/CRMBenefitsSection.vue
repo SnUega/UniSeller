@@ -27,28 +27,28 @@
       <!-- Features grid -->
       <div class="features-grid">
         <!-- Card 1 - with border -->
-        <div class="feature-card with-border">
+        <div class="feature-card card-glow-border">
           <img src="/src/assets/images/ico/codicon_settings.svg" alt="" class="feature-icon" loading="lazy" />
           <h3 class="feature-title">Простая настройка и интеграция</h3>
           <p class="feature-text">Uniseller даёт возможность производить интеграцию с системой 1С, Мой склад, а также по API. Применяя собственные наработки и опыт, наша команда готова создать для вас ваше собственно ПО, для ваших нужд, произвести оптимизацию и автоматизацию ваших бизнес процессов.</p>
         </div>
 
         <!-- Card 2 - no border -->
-        <div class="feature-card">
+        <div class="feature-card card-glow-border">
           <img src="/src/assets/images/ico/tabler_filter.svg" alt="" class="feature-icon" loading="lazy" />
           <h3 class="feature-title">Отслеживайте и управляйте лидами</h3>
           <p class="feature-text">В основу Uniseller легла идея управления продажами с одного окна, в котором объединены личные кабинеты различных маркетплейсов и даже организаций. Подключив личные кабинеты каждого из МП к Uniseller вы получите три ЛК в одном окне.</p>
         </div>
 
         <!-- Card 3 - no border -->
-        <div class="feature-card">
+        <div class="feature-card card-glow-border">
           <img src="/src/assets/images/ico/tabler_users.svg" alt="" class="feature-icon" loading="lazy" />
           <h3 class="feature-title">Централизуйте данные о клиентах</h3>
           <p class="feature-text">Uniseller — мощный аналитический инструмент, с помощью которого можно отслеживать объём реализованной продукции, посмотреть чистую прибыль и многое другое.</p>
         </div>
 
         <!-- Card 4 - with border -->
-        <div class="feature-card with-border">
+        <div class="feature-card card-glow-border">
           <img src="/src/assets/images/ico/ci_settings.svg" alt="" class="feature-icon" loading="lazy" />
           <h3 class="feature-title">Автоматизируйте рутинные задачи</h3>
           <p class="feature-text">Ускоренный способ поиска позиций и комплектации заказов. Изменение и контроль статусов. Минимальный процент ошибок и отмен.</p>
@@ -60,8 +60,15 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.feature-card',
+  getSectionEl: () => sectionRef.value,
+  radius: 480
+})
 const animateDeco = ref(false)
 const scrollY = ref(0)
 const sectionTop = ref(0)
@@ -75,7 +82,7 @@ const blobLeftStyle = computed(() => {
   }
   const offset = scrollY.value - sectionTop.value
   return {
-    transform: `translateY(${offset * 0.18}px)`
+    transform: `translateY(${offset * 0.38}px)`
   }
 })
 const blobRightStyle = computed(() => {
@@ -85,7 +92,7 @@ const blobRightStyle = computed(() => {
   }
   const offset = scrollY.value - sectionTop.value
   return {
-    transform: `translateY(${offset * 0.18}px)`
+    transform: `translateY(${offset * 0.38}px)`
   }
 })
 
@@ -364,42 +371,10 @@ onUnmounted(() => {
   gap: 20px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
-  position: relative; /* ← Для ::before */
+  position: relative;
 }
 
-/* Градиентная рамка для ВСЕХ карточек при hover */
-.feature-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 2px;
-  background: 
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-image: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0; /* Скрыт по умолчанию */
-  transition: opacity 0.3s ease;
-}
-
-/* Градиент появляется при hover */
-.feature-card:hover::before {
-  opacity: 1;
-}
-
-/* Cards with gradient border (1 and 4) — НЕ НУЖНО, теперь все карточки одинаковые */
-.feature-card.with-border {
-  /* Убираем дублирование стилей */
-}
+/* Градиентная рамка — теперь через .card-glow-border::after (useCardGlow) */
 
 .feature-icon {
   width: 48px;

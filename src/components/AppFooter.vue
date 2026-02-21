@@ -49,29 +49,37 @@
           <!-- Right: Form -->
           <div class="footer-right">
             <div class="form-grid">
-              <input type="text" placeholder="Имя" class="form-input" v-model="formData.name" />
-              <input type="text" placeholder="Компания" class="form-input" v-model="formData.company" />
-              <input 
-                type="tel" 
-                placeholder="Телефон" 
-                class="form-input" 
-                :class="{ 'error': errors.phone }"
-                v-model="formData.phone"
-                @blur="validatePhone"
-              />
-              <input 
-                type="email" 
-                placeholder="Почта" 
-                class="form-input"
-                :class="{ 'error': errors.email }"
-                v-model="formData.email"
-                @blur="validateEmail"
-              />
+              <div class="input-glow-wrap card-glow-border">
+                <input type="text" placeholder="Имя" class="form-input" v-model="formData.name" />
+              </div>
+              <div class="input-glow-wrap card-glow-border">
+                <input type="text" placeholder="Компания" class="form-input" v-model="formData.company" />
+              </div>
+              <div class="input-glow-wrap card-glow-border">
+                <input 
+                  type="tel" 
+                  placeholder="Телефон" 
+                  class="form-input" 
+                  :class="{ 'error': errors.phone }"
+                  v-model="formData.phone"
+                  @blur="validatePhone"
+                />
+              </div>
+              <div class="input-glow-wrap card-glow-border">
+                <input 
+                  type="email" 
+                  placeholder="Почта" 
+                  class="form-input"
+                  :class="{ 'error': errors.email }"
+                  v-model="formData.email"
+                  @blur="validateEmail"
+                />
+              </div>
             </div>
 
             <div class="form-select-wrapper" @mouseenter="openDropdown" @mouseleave="closeDropdown">
               <button 
-                class="form-select" 
+                class="form-select card-glow-border" 
                 :class="{ 'active': dropdownOpen, 'has-selection': selectedProduct }"
                 @click.prevent="toggleDropdown"
               >
@@ -101,7 +109,7 @@
 
             <textarea 
               placeholder="Комментарий" 
-              class="form-textarea" 
+              class="form-textarea card-glow-border" 
               rows="3"
               v-model="formData.comment"
               maxlength="120"
@@ -188,8 +196,14 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import AuroraBackground from './AuroraBackground.vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const footerRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.input-glow-wrap, .form-select, .form-textarea',
+  getSectionEl: () => footerRef.value,
+})
 const dotsCanvas = ref(null)
 const consent = ref(false)
 const selectedProduct = ref('')
@@ -734,7 +748,7 @@ onUnmounted(() => {
   padding: 16px 20px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(24px) saturate(180%); /* ← УСИЛЕН BLUR */
+  backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.09);
   color: rgba(255, 255, 255, 0.9);
@@ -744,6 +758,17 @@ onUnmounted(() => {
   outline: none;
   transition: border-color 0.3s;
   box-sizing: border-box;
+  position: relative;
+}
+
+/* Обёртка для <input> — т.к. ::after не работает на input-элементах */
+.input-glow-wrap {
+  position: relative;
+  border-radius: 14px;
+}
+
+.input-glow-wrap .form-input {
+  border-radius: inherit;
 }
 
 .form-input::placeholder,

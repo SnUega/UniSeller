@@ -32,7 +32,7 @@
           <div
             v-for="(review, i) in reviews"
             :key="i"
-            class="review-card"
+            class="review-card card-glow-border"
             :class="{ active: currentSlide === i }"
           >
             <p class="review-text">{{ review.text }}</p>
@@ -63,8 +63,15 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.review-card',
+  getSectionEl: () => sectionRef.value,
+  radius: 480
+})
 const sliderEl = ref(null)
 const currentSlide = ref(0)
 const cardWidth = 340
@@ -81,7 +88,7 @@ const blobRightStyle = computed(() => {
   }
   const offset = scrollY.value - sectionTop.value
   return {
-    transform: `translateY(${offset * 0.18}px)`
+    transform: `translateY(${offset * 0.38}px)`
   }
 })
 
@@ -259,7 +266,7 @@ onUnmounted(() => {
   line-height: 110%;
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 48px;
-  text-align: center;
+  text-align: left;
 }
 
 .reviews-header {
@@ -392,29 +399,11 @@ onUnmounted(() => {
   transition: background 0.4s;
 }
 
-/* Градиентная рамка при hover */
-.review-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 2px;
-  background: 
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+/* Градиентная рамка — теперь через .card-glow-border::after (useCardGlow) */
+/* Активная карточка слайдера — усиленный glow */
+.review-card.active {
+  --glow-intensity: 0.85;
 }
-
-.review-card:hover::before {
-  opacity: 1;
-}
-
 
 @media (max-width: 640px) {
   .review-card {
@@ -425,29 +414,6 @@ onUnmounted(() => {
     box-sizing: border-box;
     flex-shrink: 0;
   }
-}
-
-/* Gradient border via pseudo — always present but fades in */
-.review-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 2px;
-  background:
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.review-card.active::before {
-  opacity: 1;
 }
 
 .review-text {

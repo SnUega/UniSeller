@@ -13,7 +13,7 @@
       <div class="products-grid">
 
         <!-- Product 1 - MPBalance -->
-        <div class="product-card">
+        <div class="product-card card-glow-border">
           <!-- Gradient spots -->
           <div class="card-glow card-glow-left"></div>
           <div class="card-glow card-glow-right"></div>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Product 2 - Content Rating -->
-        <div class="product-card product-card-2">
+        <div class="product-card product-card-2 card-glow-border">
           <div class="card-glow card-glow-left"></div>
           <div class="card-glow card-glow-right"></div>
 
@@ -103,8 +103,15 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.product-card',
+  getSectionEl: () => sectionRef.value,
+  radius: 480
+})
 const scrollY = ref(0)
 const sectionTop = ref(0)
 const isMobile = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
@@ -117,7 +124,7 @@ const blobLeftStyle = computed(() => {
   }
   const offset = scrollY.value - sectionTop.value
   return {
-    transform: `translateY(${offset * 0.18}px)`
+    transform: `translateY(${offset * 0.38}px)`
   }
 })
 
@@ -221,28 +228,7 @@ onUnmounted(() => {
   z-index: 10;
 }
 
-/* Градиентная рамка при hover */
-.product-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 2px;
-  background: 
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.product-card:hover::before {
-  opacity: 1;
-}
+/* Градиентная рамка — теперь через .card-glow-border::after (useCardGlow) */
 
 .card-glow {
   position: absolute;

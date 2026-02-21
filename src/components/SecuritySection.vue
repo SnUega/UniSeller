@@ -1,22 +1,22 @@
 <template>
-  <section class="security">
+  <section class="security" ref="sectionRef">
     <div class="container">
       <h2 class="section-title">Обеспечиваем безопасную работу<br>с вашими данными</h2>
 
       <div class="security-grid">
-        <div class="security-card">
+        <div class="security-card card-glow-border">
           <img src="/src/assets/images/ico/ri_shield-fill.svg" alt="" class="security-icon" loading="lazy" />
           <h3 class="security-title">Контроль 24/7</h3>
           <p class="security-text">Регулярные аудиты, тесты безопасности, сквозное шифрование, 2FA, авто-создание резервных копий</p>
         </div>
 
-        <div class="security-card">
+        <div class="security-card card-glow-border">
           <img src="/src/assets/images/ico/lets-icons_file-dock-light.svg" alt="" class="security-icon" loading="lazy" />
           <h3 class="security-title">Соблюдение 152-ФЗ РФ</h3>
           <p class="security-text">Следуем индустриальным стандартам ISO, вовремя получая все сертификаты и лицензии</p>
         </div>
 
-        <div class="security-card with-border">
+        <div class="security-card card-glow-border">
           <img src="/src/assets/images/ico/hugeicons_chat-secure-01.svg" alt="" class="security-icon" loading="lazy" />
           <h3 class="security-title">Внимательная тех поддержка</h3>
           <p class="security-text">Ваши данные защищены на собственных серверах с полной конфиденциальностью.</p>
@@ -25,6 +25,19 @@
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
+
+const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.security-card',
+  getSectionEl: () => sectionRef.value,
+  radius: 480
+})
+</script>
 
 <style scoped>
 .security {
@@ -54,7 +67,6 @@
   gap: 24px;
 }
 
-/* Base card — same as CRM plain cards */
 .security-card {
   border-radius: 24px;
   padding: 20px;
@@ -63,36 +75,10 @@
   gap: 16px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(8px);
-  position: relative; /* ← Для ::before */
+  position: relative;
 }
 
-/* Градиентная рамка для ВСЕХ карточек при hover */
-.security-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 2px;
-  background: 
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.security-card:hover::before {
-  opacity: 1;
-}
-
-/* With-border class больше не нужен — все карточки одинаковые */
-.security-card.with-border {
-  /* Убрали дублирование */
-}
+/* Градиентная рамка — теперь через .card-glow-border::after (useCardGlow) */
 
 .security-icon {
   width: 48px;

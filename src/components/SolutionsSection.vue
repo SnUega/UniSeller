@@ -27,27 +27,7 @@
           <div
             v-for="(slide, i) in slides"
             :key="i"
-            class="solution-card"
-            :class="{ 'active': currentSlide === i }"
-          >
-            <h3 class="card-title">{{ slide.title }}</h3>
-            <p class="card-text">{{ slide.text }}</p>
-            <div class="card-image">
-              <img :src="slide.image" :alt="slide.title" loading="lazy" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mobile slider - like pricing slider -->
-    <div class="mobile-slider-wrap" v-show="isMobile.value">
-      <div class="mobile-slider-outer" ref="mobileSliderEl">
-        <div class="mobile-slider-track" :style="{ transform: `translateX(calc(-${currentSlide * 100}% - ${currentSlide * 16}px))` }">
-          <div
-            v-for="(slide, i) in slides"
-            :key="i"
-            class="solution-card"
+            class="solution-card card-glow-border"
             :class="{ 'active': currentSlide === i }"
           >
             <h3 class="card-title">{{ slide.title }}</h3>
@@ -78,8 +58,15 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.solution-card',
+  getSectionEl: () => sectionRef.value,
+  radius: 480
+})
 const sliderEl = ref(null)
 const mobileSliderEl = ref(null)
 const dotsCanvas = ref(null)
@@ -616,30 +603,9 @@ onUnmounted(() => {
   contain: layout style;
 }
 
-/* Active card — gradient border, always rendered but fades in */
-.solution-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 2px;
-  background:
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.solution-card.active::before {
-  opacity: 1;
-}
-
-.solution-card:hover::before {
-  opacity: 1;
+/* Active card — kept for active state only */
+.solution-card.active::after {
+  --glow-intensity: 0.85;
 }
 
 .card-image {
@@ -701,7 +667,7 @@ onUnmounted(() => {
   }
   .section-title { 
     font-size: 22px;
-    text-align: center; 
+    text-align: left;
   }
   .solutions-header {
     flex-direction: column;
@@ -725,7 +691,6 @@ onUnmounted(() => {
   .slider-outer {
     display: none;
   }
-  
   .mobile-slider-wrap {
     margin: 0 20px;
     display: block !important;

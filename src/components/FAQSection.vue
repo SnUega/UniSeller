@@ -17,7 +17,7 @@
         <div 
           v-for="(item, index) in faqItems" 
           :key="index"
-          class="faq-item"
+          class="faq-item card-glow-border"
           :class="{ 'active': activeIndex === index }"
         >
           <button 
@@ -57,8 +57,14 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.faq-item',
+  getSectionEl: () => sectionRef.value,
+})
 const scrollY = ref(0)
 const sectionTop = ref(0)
 const activeIndex = ref(null) // Initially closed
@@ -73,7 +79,7 @@ const blobLeftStyle = computed(() => {
   }
   const offset = scrollY.value - sectionTop.value
   return {
-    transform: `translateY(${offset * 0.18}px)`
+    transform: `translateY(${offset * 0.38}px)`
   }
 })
 
@@ -452,24 +458,7 @@ const afterLeave = (element) => {
   position: relative;
 }
 
-.faq-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  padding: 2px;
-  background:
-    linear-gradient(93.85deg, rgba(255, 213, 138, 0.3) 0%, rgba(255, 213, 138, 0.12) 100%),
-    linear-gradient(64.18deg, rgba(255, 169, 44, 0) 72.93%, #FFA92C 93.92%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Градиентная рамка — через .card-glow-border::after (useCardGlow) */
 
 .faq-item.active {
   background: rgba(255, 255, 255, 0.06);
@@ -477,8 +466,9 @@ const afterLeave = (element) => {
   position: relative;
 }
 
-.faq-item.active::before {
-  opacity: 1;
+/* Активный аккордеон — усиленный glow */
+.faq-item.active {
+  --glow-intensity: 0.85;
 }
 
 .faq-question {

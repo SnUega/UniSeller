@@ -1,6 +1,6 @@
 <template>
-  <header class="header">
-    <div class="glass-panel">
+  <header class="header" ref="headerRef">
+    <div class="glass-panel card-glow-border">
       <div class="logo">
         <img src="/src/assets/images/logo-main.png" alt="Uniseller" class="logo-img" loading="eager" />
       </div>
@@ -96,11 +96,18 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const mobileMenuOpen = ref(false)
 const openedDropdown = ref(null)
-const mobileAccordion = ref(null) // для мобильных аккордеонов
+const mobileAccordion = ref(null)
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1440)
+const headerRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.glass-panel',
+  getSectionEl: () => headerRef.value,
+})
 
 const isMobile = computed(() => windowWidth.value <= 968)
 

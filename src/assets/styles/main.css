@@ -167,9 +167,6 @@ img[src$=".svg"],
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 20px;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .section-subtitle {
@@ -206,4 +203,43 @@ img {
 /* Для SVG - высокое качество */
 svg {
   shape-rendering: geometricPrecision;
+}
+
+/* ============================================================
+   Dynamic orange border glow (MagicBento-style)
+   Replaces static hover::before gradient border on all cards.
+   --glow-x, --glow-y, --glow-intensity set via useCardGlow.js
+   ============================================================ */
+.card-glow-border {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 300px;
+  position: relative;
+}
+
+.card-glow-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(255, 169, 44, calc(var(--glow-intensity) * 0.9)) 0%,
+    rgba(255, 213, 138, calc(var(--glow-intensity) * 0.5)) 30%,
+    transparent 60%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }

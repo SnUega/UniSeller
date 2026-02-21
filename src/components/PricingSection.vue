@@ -13,7 +13,7 @@
       <!-- Desktop grid -->
       <div class="pricing-grid desktop-grid">
         <div v-for="(plan, i) in plans" :key="i" class="pricing-card" :class="plan.type">
-          <div class="card-top">
+          <div class="card-top card-glow-border">
             <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
             <div class="plan-header-row">
               <div class="plan-name">{{ plan.name }}</div>
@@ -48,7 +48,7 @@
         <div class="mobile-slider-outer">
           <div class="mobile-slider-track" :style="{ transform: `translateX(calc(-${mobileSlide * 100}% - ${mobileSlide * 16}px))` }">
             <div v-for="(plan, i) in mobilePlans" :key="i" class="pricing-card" :class="plan.type">
-              <div class="card-top">
+              <div class="card-top card-glow-border">
                 <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
                 <div class="plan-header-row">
                   <div class="plan-name">{{ plan.name }}</div>
@@ -95,8 +95,14 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useCardGlow } from '../composables/useCardGlow.js'
 
 const sectionRef = ref(null)
+
+useCardGlow({
+  cardSelector: '.card-top',
+  getSectionEl: () => sectionRef.value,
+})
 const scrollY = ref(0)
 const sectionTop = ref(0)
 const isMobile = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
@@ -109,7 +115,7 @@ const blobRightStyle = computed(() => {
   }
   const offset = scrollY.value - sectionTop.value
   return {
-    transform: `translateY(${offset * 0.18}px)`
+    transform: `translateY(${offset * 0.38}px)`
   }
 })
 
