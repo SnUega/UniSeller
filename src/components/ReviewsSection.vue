@@ -11,10 +11,10 @@
       <div class="reviews-header">
         <h2 class="section-title" ref="titleRef">Отзывы</h2>
         <div class="slider-nav">
-          <button @click="prevSlide" class="nav-btn" :disabled="currentSlide === 0">
+          <button @click="prevSlide" class="nav-btn card-glow-border" :disabled="currentSlide === 0">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-prev" loading="lazy" />
           </button>
-          <button @click="nextSlide" class="nav-btn" :disabled="currentSlide >= maxSlide">
+          <button @click="nextSlide" class="nav-btn card-glow-border" :disabled="currentSlide >= maxSlide">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-next" loading="lazy" />
           </button>
         </div>
@@ -50,10 +50,10 @@
     <div class="container">
       <div class="slider-nav-wrapper">
         <div class="slider-nav">
-          <button @click="prevSlide" class="nav-btn" :disabled="currentSlide === 0">
+          <button @click="prevSlide" class="nav-btn card-glow-border" :disabled="currentSlide === 0">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-prev" loading="lazy" />
           </button>
-          <button @click="nextSlide" class="nav-btn" :disabled="currentSlide >= maxSlide">
+          <button @click="nextSlide" class="nav-btn card-glow-border" :disabled="currentSlide >= maxSlide">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-next" loading="lazy" />
           </button>
         </div>
@@ -65,14 +65,14 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
-import { animateTitleFromRight, animateBubbleStagger } from '../composables/useScrollAnimations.js'
+import { animateCenterTitle, animateBubbleStagger } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
 const titleRef = ref(null)
 const reviewsSliderTrackRef = ref(null)
 
 useCardGlow({
-  cardSelector: '.review-card',
+  cardSelector: '.review-card, .nav-btn',
   getSectionEl: () => sectionRef.value,
   radius: 480
 })
@@ -243,7 +243,7 @@ onMounted(() => {
   }
 
   // Scroll animations
-  animateTitleFromRight(titleRef.value)
+  animateCenterTitle(titleRef.value)
   if (reviewsSliderTrackRef.value) {
     const cards = reviewsSliderTrackRef.value.querySelectorAll('.review-card')
     animateBubbleStagger([...cards].slice(0, 3), { triggerEl: sectionRef.value })

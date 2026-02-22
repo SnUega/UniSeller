@@ -1,5 +1,7 @@
 <template>
   <footer class="footer" ref="footerRef">
+    <!-- Success popup -->
+    <SuccessPopup :visible="showSuccessPopup" @close="showSuccessPopup = false" />
 
     <!-- Aurora - bottom of page -->
     <div class="aurora-wrap">
@@ -24,14 +26,29 @@
             <h2 class="cta-title">Готовы<br>к инновациям?<br>Начните свой путь<br>в CRM <img src="/src/assets/images/ico/footer-arrow.svg" alt="" class="arrow-icon" loading="lazy" /></h2>
 
             <div class="social-links desktop-social">
-              <a href="#" class="social-link">
+              <a href="https://t.me/uniseller_io" target="_blank" rel="noopener" class="social-link" aria-label="Telegram">
                 <img src="/src/assets/images/ico/social-ico/1-tg.svg" alt="Telegram" loading="lazy" />
               </a>
-              <a href="#" class="social-link">
+              <a href="http://youtube.com/uniseller" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
                 <img src="/src/assets/images/ico/social-ico/2-yt.svg" alt="YouTube" loading="lazy" />
               </a>
-              <a href="#" class="social-link">
+              <a href="https://www.instagram.com/uniseller.io" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
                 <img src="/src/assets/images/ico/social-ico/3-insta.svg" alt="Instagram" loading="lazy" />
+              </a>
+              <a href="tel:+79162178516" class="social-link social-link--phone" aria-label="Позвонить">
+                <svg class="phone-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="footer-phone-grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#FFD58A"/>
+                      <stop offset="1" stop-color="#FFA92C"/>
+                    </linearGradient>
+                    <mask id="footer-phone-mask">
+                      <circle cx="12" cy="12" r="11" fill="white"/>
+                      <path fill="black" d="M15.22,20.64a20.37,20.37,0,0,0,7.4,4.79l3.77-3a.67.67,0,0,1,.76,0l7,4.51a2,2,0,0,1,.33,3.18l-3.28,3.24a4,4,0,0,1-3.63,1.07,35.09,35.09,0,0,1-17.15-9A33.79,33.79,0,0,1,1.15,8.6a3.78,3.78,0,0,1,1.1-3.55l3.4-3.28a2,2,0,0,1,3.12.32L13.43,9a.63.63,0,0,1,0,.75l-3.07,3.69A19.75,19.75,0,0,0,15.22,20.64Z" transform="translate(12,12) scale(0.4) translate(-18,-18)"/>
+                    </mask>
+                  </defs>
+                  <circle cx="12" cy="12" r="11" fill="url(#footer-phone-grad)" stroke="rgba(255,255,255,0.15)" stroke-width="1" mask="url(#footer-phone-mask)"/>
+                </svg>
               </a>
             </div>
 
@@ -77,7 +94,7 @@
               </div>
             </div>
 
-            <div class="form-select-wrapper" @mouseenter="openDropdown" @mouseleave="closeDropdown">
+            <div class="form-select-wrapper" ref="dropdownWrapRef">
               <button 
                 class="form-select card-glow-border" 
                 :class="{ 'active': dropdownOpen, 'has-selection': selectedProduct }"
@@ -107,13 +124,15 @@
               </transition>
             </div>
 
-            <textarea 
-              placeholder="Комментарий" 
-              class="form-textarea card-glow-border" 
-              rows="3"
-              v-model="formData.comment"
-              maxlength="120"
-            ></textarea>
+            <div class="input-glow-wrap card-glow-border textarea-wrap">
+              <textarea 
+                placeholder="Комментарий" 
+                class="form-textarea" 
+                rows="3"
+                v-model="formData.comment"
+                maxlength="120"
+              ></textarea>
+            </div>
 
             <label class="checkbox-label">
               <input type="checkbox" v-model="consent" class="checkbox-input" />
@@ -126,11 +145,12 @@
               @mouseenter="showHint = true"
               @mouseleave="showHint = false"
               @touchstart.prevent="!isFormValid && (showHint = true)"
-              @touchend="setTimeout(() => showHint = false, 2500)"
+              @touchend="() => window.setTimeout(() => showHint = false, 2500)"
             >
               <button 
                 class="btn-submit" 
                 :disabled="!isFormValid"
+                @click.prevent="submitForm"
               >
                 Отправить
               </button>
@@ -145,14 +165,29 @@
           <!-- Mobile order: Social, Address, Skolkovo -->
           <div class="footer-mobile-extra">
             <div class="social-links mobile-social">
-              <a href="#" class="social-link">
+              <a href="https://t.me/uniseller_io" target="_blank" rel="noopener" class="social-link" aria-label="Telegram">
                 <img src="/src/assets/images/ico/social-ico/1-tg.svg" alt="Telegram" loading="lazy" />
               </a>
-              <a href="#" class="social-link">
+              <a href="http://youtube.com/uniseller" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
                 <img src="/src/assets/images/ico/social-ico/2-yt.svg" alt="YouTube" loading="lazy" />
               </a>
-              <a href="#" class="social-link">
+              <a href="https://www.instagram.com/uniseller.io" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
                 <img src="/src/assets/images/ico/social-ico/3-insta.svg" alt="Instagram" loading="lazy" />
+              </a>
+              <a href="tel:+79162178516" class="social-link social-link--phone" aria-label="Позвонить">
+                <svg class="phone-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="footer-phone-grad-mob" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#FFD58A"/>
+                      <stop offset="1" stop-color="#FFA92C"/>
+                    </linearGradient>
+                    <mask id="footer-phone-mask-mob">
+                      <circle cx="12" cy="12" r="11" fill="white"/>
+                      <path fill="black" d="M15.22,20.64a20.37,20.37,0,0,0,7.4,4.79l3.77-3a.67.67,0,0,1,.76,0l7,4.51a2,2,0,0,1,.33,3.18l-3.28,3.24a4,4,0,0,1-3.63,1.07,35.09,35.09,0,0,1-17.15-9A33.79,33.79,0,0,1,1.15,8.6a3.78,3.78,0,0,1,1.1-3.55l3.4-3.28a2,2,0,0,1,3.12.32L13.43,9a.63.63,0,0,1,0,.75l-3.07,3.69A19.75,19.75,0,0,0,15.22,20.64Z" transform="translate(12,12) scale(0.4) translate(-18,-18)"/>
+                    </mask>
+                  </defs>
+                  <circle cx="12" cy="12" r="11" fill="url(#footer-phone-grad-mob)" stroke="rgba(255,255,255,0.15)" stroke-width="1" mask="url(#footer-phone-mask-mob)"/>
+                </svg>
               </a>
         </div>
 
@@ -198,12 +233,16 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import AuroraBackground from './AuroraBackground.vue'
+import SuccessPopup from './SuccessPopup.vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
 
 const footerRef = ref(null)
+const dropdownWrapRef = ref(null)
+const showSuccessPopup = ref(false)
+const isSubmitting = ref(false)
 
 useCardGlow({
-  cardSelector: '.input-glow-wrap, .form-select, .form-textarea',
+  cardSelector: '.input-glow-wrap, .form-select',
   getSectionEl: () => footerRef.value,
 })
 const dotsCanvas = ref(null)
@@ -252,17 +291,97 @@ const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
 }
 
-const openDropdown = () => {
-  dropdownOpen.value = true
-}
-
 const closeDropdown = () => {
   dropdownOpen.value = false
+}
+
+// Закрывать dropdown при клике/тапе за его пределами
+const onDocumentClickDropdown = (e) => {
+  if (dropdownWrapRef.value && !dropdownWrapRef.value.contains(e.target)) {
+    dropdownOpen.value = false
+  }
 }
 
 const selectProduct = (product) => {
   selectedProduct.value = product
   dropdownOpen.value = false
+}
+
+// ─── Отправка формы ───────────────────────────────────────────────
+// true = Web3Forms (работает без PHP, письмо в стандартном виде).
+// false = send.php (нужен PHP, письмо с HTML-версткой в стиле страницы).
+const USE_WEB3FORMS = true
+const W3F_ACCESS_KEY = '06f2700d-5f2c-4f2e-9667-7de9d40ab80e'
+
+const submitForm = async () => {
+  if (!isFormValid.value || isSubmitting.value) return
+  isSubmitting.value = true
+
+  const d = formData.value
+  const product = selectedProduct.value || '—'
+
+  const payload = USE_WEB3FORMS
+    ? {
+        access_key: W3F_ACCESS_KEY,
+        subject: `Новая заявка от ${d.name || 'пользователя'} | Uniseller`,
+        from_name: 'Uniseller',
+        replyto: d.email,
+        message: [
+          'Новая заявка с сайта',
+          '',
+          `Имя: ${d.name || '—'}`,
+          `Компания: ${d.company || '—'}`,
+          `Телефон: ${d.phone}`,
+          `Email: ${d.email}`,
+          `Продукт: ${product}`,
+          d.comment ? `Комментарий: ${d.comment}` : '',
+        ].filter(Boolean).join('\n'),
+        botcheck: '',
+      }
+    : {
+        name: d.name,
+        company: d.company,
+        phone: d.phone,
+        email: d.email,
+        product,
+        comment: d.comment,
+      }
+
+  const endpoint = USE_WEB3FORMS ? 'https://api.web3forms.com/submit' : '/send.php'
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const raw = await res.text()
+    let data = {}
+    try {
+      data = JSON.parse(raw)
+    } catch {
+      if (!USE_WEB3FORMS) {
+        console.error('Send error: ответ не JSON. Запустите PHP (php -S localhost:8080 -t public) или поставьте USE_WEB3FORMS = true.', raw.slice(0, 200))
+      } else {
+        console.error('Send error: ответ не JSON.', raw.slice(0, 200))
+      }
+      isSubmitting.value = false
+      return
+    }
+    if (data.success) {
+      showSuccessPopup.value = true
+      formData.value = { name: '', company: '', phone: '', email: '', comment: '' }
+      selectedProduct.value = ''
+      consent.value = false
+      errors.value = { phone: false, email: false }
+    } else {
+      console.error('Send error:', data.message || res.statusText)
+    }
+  } catch (e) {
+    console.error('Network error:', e)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 let ctx = null
@@ -459,6 +578,8 @@ onMounted(() => {
   document.addEventListener('touchmove', handleTouchMove, { passive: true })
   document.addEventListener('touchend', handleTouchEnd, { passive: true })
   document.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+  document.addEventListener('click', onDocumentClickDropdown)
+  document.addEventListener('touchstart', onDocumentClickDropdown, { passive: true })
   window.addEventListener('resize', throttledResizeCanvas)
   // Observe footer height changes
   resizeObserver = new ResizeObserver(() => throttledResizeCanvas())
@@ -472,6 +593,8 @@ onUnmounted(() => {
   document.removeEventListener('touchmove', handleTouchMove)
   document.removeEventListener('touchend', handleTouchEnd)
   document.removeEventListener('touchcancel', handleTouchEnd)
+  document.removeEventListener('click', onDocumentClickDropdown)
+  document.removeEventListener('touchstart', onDocumentClickDropdown)
   window.removeEventListener('resize', throttledResizeCanvas)
   if (resizeCanvasTimeout) cancelAnimationFrame(resizeCanvasTimeout)
   if (resizeObserver) resizeObserver.disconnect()
@@ -614,9 +737,16 @@ onUnmounted(() => {
   opacity: 0.8;
 }
 
-.social-link img {
+.social-link img,
+.social-link svg {
   width: 20px;
   height: 20px;
+}
+.social-link--phone .phone-icon-svg {
+  flex-shrink: 0;
+  display: block;
+  width: 24px;
+  height: 24px;
 }
 
 .footer-address {
@@ -761,12 +891,23 @@ onUnmounted(() => {
   transition: border-color 0.3s;
   box-sizing: border-box;
   position: relative;
+  overflow: visible; /* нужно чтобы ::after card-glow-border был виден */
+  resize: vertical;
 }
 
 /* Обёртка для <input> — т.к. ::after не работает на input-элементах */
 .input-glow-wrap {
   position: relative;
   border-radius: 14px;
+}
+
+.textarea-wrap {
+  display: block; /* растягивается по высоте textarea */
+}
+
+.textarea-wrap .form-textarea {
+  display: block;
+  width: 100%;
 }
 
 .input-glow-wrap .form-input {

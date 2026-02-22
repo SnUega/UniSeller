@@ -7,10 +7,10 @@
       <div class="solutions-header">
         <h2 class="section-title" ref="titleRef">Решения для автоматизации<br>и продвижения бизнеса на маркетплейсах</h2>
         <div class="slider-nav">
-          <button @click="prevSlide" class="nav-btn" :disabled="currentSlide === 0" aria-label="Previous">
+          <button @click="prevSlide" class="nav-btn card-glow-border" :disabled="currentSlide === 0" aria-label="Previous">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-prev" loading="lazy" />
           </button>
-          <button @click="nextSlide" class="nav-btn" :disabled="currentSlide >= maxSlide" aria-label="Next">
+          <button @click="nextSlide" class="nav-btn card-glow-border" :disabled="currentSlide >= maxSlide" aria-label="Next">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-next" loading="lazy" />
           </button>
         </div>
@@ -45,10 +45,10 @@
     <div class="container">
       <div class="slider-nav-wrapper">
         <div class="slider-nav">
-          <button @click="prevSlide" class="nav-btn" :disabled="currentSlide === 0" aria-label="Previous">
+          <button @click="prevSlide" class="nav-btn card-glow-border" :disabled="currentSlide === 0" aria-label="Previous">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-prev" loading="lazy" />
           </button>
-          <button @click="nextSlide" class="nav-btn" :disabled="currentSlide >= maxSlide" aria-label="Next">
+          <button @click="nextSlide" class="nav-btn card-glow-border" :disabled="currentSlide >= maxSlide" aria-label="Next">
             <img src="/src/assets/images/ico/slider-nav-arrow.svg" alt="" class="arrow-next" loading="lazy" />
           </button>
         </div>
@@ -60,14 +60,14 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
-import { animateTitleFromRight, animateBubbleStagger } from '../composables/useScrollAnimations.js'
+import { animateCenterTitle, animateBubbleStagger } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
 const titleRef = ref(null)
 const sliderTrackRef = ref(null)
 
 useCardGlow({
-  cardSelector: '.solution-card',
+  cardSelector: '.solution-card, .nav-btn',
   getSectionEl: () => sectionRef.value,
   radius: 480
 })
@@ -385,7 +385,7 @@ onMounted(() => {
   }
 
   // Scroll animations
-  animateTitleFromRight(titleRef.value)
+  animateCenterTitle(titleRef.value)
   if (sliderTrackRef.value) {
     const cards = sliderTrackRef.value.querySelectorAll('.solution-card')
     // Анимируем первые видимые карточки (~2-3), stagger небольшой чтобы не наезжали

@@ -3,6 +3,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// Отключаем нормализацию скролла — она блокирует нативный тач-скролл на мобилах
+ScrollTrigger.config({
+  ignoreMobileResize: true,  // не пересчитываем триггеры при изменении высоты адресной строки
+  autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load', // убираем resize из авто-обновлений
+})
+
 const isMobile = () => typeof window !== 'undefined' && window.innerWidth <= 768
 
 const trigger = (el, extra = {}) => ({
@@ -95,20 +101,27 @@ export function animateSlideFromLeft(el, { triggerEl = null, delay = 0 } = {}) {
 
 /**
  * Feature items — направление задаётся через direction: 'right'|'left'|'down'
- * right = x: +28 (справа налево) — для карточки 1
- * left  = x: -28 (слева направо) — для карточки 2
- * down  = y: -22 (сверху вниз)   — для Pricing (узкие высокие карточки)
+ * На мобилах анимирует весь блок целиком (один trigger) вместо каждого item отдельно
  */
 export function animateFeatureItems(containerEl, { triggerEl = null, baseDelay = 0, direction = 'right' } = {}) {
   if (!containerEl) return
   const items = containerEl.querySelectorAll('.feature-item')
   if (!items.length) return
 
+  // На мобилах — простой fadeUp всего блока, без per-item триггеров
+  if (isMobile()) {
+    gsap.fromTo(containerEl,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', scrollTrigger: trigger(triggerEl || containerEl) }
+    )
+    return
+  }
+
   const fromVars = direction === 'down'
     ? { opacity: 0, y: -22, x: 0 }
     : direction === 'left'
       ? { opacity: 0, x: -28, y: 0 }
-      : { opacity: 0, x: 28, y: 0 }   // default 'right'
+      : { opacity: 0, x: 28, y: 0 }
 
   items.forEach((item, i) => {
     const delay = baseDelay + i * 0.10
@@ -125,11 +138,20 @@ export function animateFeatureItems(containerEl, { triggerEl = null, baseDelay =
   })
 }
 
-/** Pricing features — сверху вниз */
+/** Pricing features — сверху вниз. На мобилах — блок целиком */
 export function animatePricingFeatures(containerEl, { triggerEl = null, baseDelay = 0 } = {}) {
   if (!containerEl) return
   const items = containerEl.querySelectorAll('.features-list li')
   if (!items.length) return
+
+  // На мобилах — один trigger на весь список
+  if (isMobile()) {
+    gsap.fromTo(containerEl,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out', scrollTrigger: trigger(triggerEl || containerEl) }
+    )
+    return
+  }
 
   items.forEach((item, i) => {
     const delay = baseDelay + i * 0.07
