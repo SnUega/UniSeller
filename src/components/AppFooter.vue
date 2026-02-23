@@ -54,7 +54,7 @@
 
             <div class="footer-address desktop-address">
               <img src="/src/assets/images/ico/mark.svg" alt="" class="pin-icon" loading="lazy" />
-              <p>121087, г. Москва, вн.тер. г. Муниципальный округ Филёвский парк, Багратионовский проезд, д. 7, корп. 20В</p>
+              <p>121087, г. Москва,<br>вн.тер. г. Муниципальный округ Филёвский парк,<br>Багратионовский проезд, д. 7, корп. 20В</p>
             </div>
 
             <div class="skolkovo-badge desktop-skolkovo">
@@ -1129,7 +1129,7 @@ onUnmounted(() => {
 @media (max-width: 1024px) {
   .btn-submit-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
   }
 }
@@ -1346,6 +1346,7 @@ onUnmounted(() => {
     );
   }
 
+  /* Одна колонка только когда НЕ планшет landscape (ниже 768 или portrait) */
   .footer-top-inner {
     grid-template-columns: 1fr;
     gap: 48px;
@@ -1416,6 +1417,44 @@ onUnmounted(() => {
   }
 
   .footer-links { align-items: flex-start; }
+}
+
+/* Планшет (iPad Mini и др.) в landscape: две колонки — слева адрес (3 строки), соц.кнопки, Сколково; справа форма. Не пересекается с мобильным (там по высоте/ширине <768). */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .footer-top-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .desktop-social,
+  .desktop-address,
+  .desktop-skolkovo {
+    display: flex !important;
+  }
+
+  .footer-mobile-extra {
+    display: none !important;
+  }
+
+  .footer-address.desktop-address p {
+    line-height: 1.45;
+    font-size: 13px;
+  }
+
+  /* Низ футера как на планшетах: лого и текст слева, ссылки справа */
+  .footer-bottom-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  .footer-links {
+    align-items: flex-end;
+    text-align: right;
+  }
 }
 
 @media (min-width: 1025px) {

@@ -54,6 +54,7 @@ useCardGlow({
 .security {
   padding: 120px 0 0;
   position: relative;
+  z-index: 2; /* выше секций с blobs при наложении */
 }
 
 .container {

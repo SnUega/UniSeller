@@ -74,30 +74,24 @@ const activeIndex = ref(null) // Initially closed
 const dotsCanvas = ref(null)
 const isMobile = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
 
-// ======= Blob parallax =======
+// ======= Blob parallax (только десктоп) =======
 const blobLeftStyle = computed(() => {
-  // Отключаем параллакс на мобильных для производительности
-  if (isMobile.value) {
-    return { transform: 'translateY(0px)' }
-  }
+  if (isMobile.value) return { transform: 'translateY(0px)' }
   const offset = scrollY.value - sectionTop.value
-  return {
-    transform: `translateY(${offset * 0.38}px)`
-  }
+  return { transform: `translateY(${offset * 0.38}px)` }
 })
 
-// Throttle для мобильных устройств
 let scrollTimeout = null
 let resizeTimeout = null
 
 const handleScroll = () => {
-  if (!sectionRef.value || isMobile.value) return // На мобильных не обрабатываем scroll для параллакса
+  if (!sectionRef.value || isMobile.value) return
   scrollY.value = window.scrollY
   sectionTop.value = sectionRef.value.offsetTop
 }
 
 const throttledScroll = () => {
-  if (isMobile.value) return // На мобильных не нужен параллакс
+  if (isMobile.value) return
   if (scrollTimeout) return
   scrollTimeout = requestAnimationFrame(() => {
     handleScroll()
@@ -405,6 +399,7 @@ const afterLeave = (element) => {
 .faq {
   padding: 120px 0 0;
   position: relative;
+  z-index: 1;
   overflow: visible;
 }
 
@@ -578,10 +573,13 @@ const afterLeave = (element) => {
   }
 }
 
+.faq .container {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 1024px) {
-  .blob-layer {
-    display: none;
-  }
+  .blob-layer { display: none; }
 }
 
 @media (max-width: 640px) {
@@ -603,8 +601,6 @@ const afterLeave = (element) => {
     font-size: 14px;
   }
   
-  .blob-left {
-    display: none;
-  }
+  .blob-left { display: none; }
 }
 </style>

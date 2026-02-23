@@ -347,7 +347,7 @@ onUnmounted(() => {
   letter-spacing: 0%;
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
-  
+  align-self: flex-end;
   height: 40px;
   padding: 0 16px;
   border-radius: 38px;
@@ -376,7 +376,7 @@ onUnmounted(() => {
   width: 32px;
   height: 32px;
   position: relative;
-  margin-left: 8px; /* Смещаем бургер левее */
+  margin-left: 8px;
   transition: transform 0.3s ease;
 }
 
@@ -414,7 +414,6 @@ onUnmounted(() => {
   border-radius: 2px;
 }
 
-/* Анимация бургера в крестик */
 .mobile-menu-toggle.active::before {
   top: 50%;
   transform: translate(-50%, -50%) rotate(45deg);
@@ -448,15 +447,15 @@ onUnmounted(() => {
   }
 }
 
-/* Tablet landscape — tighter nav */
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+/* Tablet / iPad Mini landscape*/
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
   .header {
     top: 12px;
     max-width: 96%;
   }
   
   .glass-panel {
-    padding: 8px 16px 8px 20px;
+    padding: 8px 16px 8px 28px;
     gap: 14px;
   }
   
@@ -478,6 +477,18 @@ onUnmounted(() => {
     font-size: 12px;
     height: 34px;
     padding: 0 12px;
+    align-self: flex-end;
+  }
+}
+
+/* Только iPad Mini (641–768px): кнопка Войти правее, вписывается в скругление панели */
+@media (min-width: 641px) and (max-width: 768px) {
+  .glass-panel {
+    padding: 10px 16px 10px 20px;
+    padding-right: 14px;
+  }
+  .nav-actions {
+    margin-left: auto;
   }
 }
 

@@ -84,16 +84,11 @@ const scrollY = ref(0)
 const sectionTop = ref(0)
 const isMobileForParallax = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
 
-// ======= Blob parallax =======
+// ======= Blob parallax (только десктоп) =======
 const blobRightStyle = computed(() => {
-  // Отключаем параллакс на мобильных для производительности
-  if (isMobileForParallax.value) {
-    return { transform: 'translateY(0px)' }
-  }
+  if (isMobileForParallax.value) return { transform: 'translateY(0px)' }
   const offset = scrollY.value - sectionTop.value
-  return {
-    transform: `translateY(${offset * 0.38}px)`
-  }
+  return { transform: `translateY(${offset * 0.38}px)` }
 })
 
 const reviews = [
@@ -194,13 +189,13 @@ let scrollTimeout = null
 let resizeTimeout = null
 
 const handleScroll = () => {
-  if (!sectionRef.value || isMobileForParallax.value) return // На мобильных не обрабатываем scroll для параллакса
+  if (!sectionRef.value || isMobileForParallax.value) return
   scrollY.value = window.scrollY
   sectionTop.value = sectionRef.value.offsetTop
 }
 
 const throttledScroll = () => {
-  if (isMobileForParallax.value) return // На мобильных не нужен параллакс
+  if (isMobileForParallax.value) return
   if (scrollTimeout) return
   scrollTimeout = requestAnimationFrame(() => {
     handleScroll()
@@ -251,8 +246,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-  window.removeEventListener('resize', handleResize)
+  window.removeEventListener('scroll', throttledScroll)
+  window.removeEventListener('resize', throttledResize)
   const el = sliderEl.value
   if (el) {
     el.removeEventListener('touchstart', onTouchStart)
@@ -266,6 +261,7 @@ onUnmounted(() => {
 .reviews {
   padding: 120px 0 145px;
   position: relative;
+  z-index: 1;
   overflow: visible;
 }
 
@@ -517,11 +513,8 @@ onUnmounted(() => {
   }
 }
 
-/* Hide blob on tablet and mobile */
 @media (max-width: 1024px) {
-  .blob-layer {
-    display: none;
-  }
+  .blob-layer { display: none; }
 }
 
 @media (max-width: 640px) {
@@ -569,8 +562,6 @@ onUnmounted(() => {
     box-sizing: border-box;
     flex-shrink: 0;
   }
-  .blob-right {
-    display: none;
-  }
+  .blob-right { display: none; }
 }
 </style>

@@ -123,30 +123,24 @@ const scrollY = ref(0)
 const sectionTop = ref(0)
 const isMobile = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
 
-// ======= Blob parallax =======
+// ======= Blob parallax (только десктоп) =======
 const blobLeftStyle = computed(() => {
-  // Отключаем параллакс на мобильных для производительности
-  if (isMobile.value) {
-    return { transform: 'translateY(0px)' }
-  }
+  if (isMobile.value) return { transform: 'translateY(0px)' }
   const offset = scrollY.value - sectionTop.value
-  return {
-    transform: `translateY(${offset * 0.38}px)`
-  }
+  return { transform: `translateY(${offset * 0.38}px)` }
 })
 
-// Throttle для мобильных устройств
 let scrollTimeout = null
 let resizeTimeout = null
 
 const handleScroll = () => {
-  if (!sectionRef.value || isMobile.value) return // На мобильных не обрабатываем scroll для параллакса
+  if (!sectionRef.value || isMobile.value) return
   scrollY.value = window.scrollY
   sectionTop.value = sectionRef.value.offsetTop
 }
 
 const throttledScroll = () => {
-  if (isMobile.value) return // На мобильных не нужен параллакс
+  if (isMobile.value) return
   if (scrollTimeout) return
   scrollTimeout = requestAnimationFrame(() => {
     handleScroll()
@@ -201,6 +195,7 @@ onUnmounted(() => {
 .products {
   padding: 120px 0 0;
   position: relative;
+  z-index: 1;
   overflow: visible;
 }
 
@@ -424,11 +419,13 @@ onUnmounted(() => {
   }
 }
 
-/* Hide blob on tablet and mobile */
+.products .container {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 1024px) {
-  .blob-layer {
-    display: none;
-  }
+  .blob-layer { display: none; }
 }
 
 @media (max-width: 900px) {
@@ -448,10 +445,8 @@ onUnmounted(() => {
   .products { padding: 80px 0 0; }
   .section-title { font-size: 22px; }
   .product-features { grid-template-columns: 1fr; }
-  .product-content { padding: 12px 20px 20px 20px; } /* Уменьшили верхний padding для сокращения расстояния от изображения */
-  .blob-left {
-    display: none;
-  }
+  .product-content { padding: 12px 20px 20px 20px; }
+  .blob-left { display: none; }
 
   .btn-details {
     width: 316px;

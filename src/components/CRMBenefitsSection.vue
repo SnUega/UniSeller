@@ -77,26 +77,16 @@ const scrollY = ref(0)
 const sectionTop = ref(0)
 const isMobile = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
 
-// ======= Blob parallax =======
+// ======= Blob parallax (только десктоп) =======
 const blobLeftStyle = computed(() => {
-  // Отключаем параллакс на мобильных для производительности
-  if (isMobile.value) {
-    return { transform: 'translateY(0px)' }
-  }
+  if (isMobile.value) return { transform: 'translateY(0px)' }
   const offset = scrollY.value - sectionTop.value
-  return {
-    transform: `translateY(${offset * 0.38}px)`
-  }
+  return { transform: `translateY(${offset * 0.38}px)` }
 })
 const blobRightStyle = computed(() => {
-  // Отключаем параллакс на мобильных для производительности
-  if (isMobile.value) {
-    return { transform: 'translateY(0px)' }
-  }
+  if (isMobile.value) return { transform: 'translateY(0px)' }
   const offset = scrollY.value - sectionTop.value
-  return {
-    transform: `translateY(${offset * 0.38}px)`
-  }
+  return { transform: `translateY(${offset * 0.38}px)` }
 })
 
 // Throttle для мобильных устройств
@@ -106,7 +96,6 @@ let resizeTimeout = null
 const handleScroll = () => {
   if (!sectionRef.value) return
 
-  // На мобильных не обрабатываем scroll для параллакса, но проверяем анимацию
   if (!isMobile.value) {
     scrollY.value = window.scrollY
     sectionTop.value = sectionRef.value.offsetTop
@@ -173,6 +162,7 @@ onUnmounted(() => {
 .crm-benefits {
   padding: 180px 0 200px;
   position: relative;
+  z-index: 1; /* ниже секций без blobs (Stats, Solutions, Security) */
   overflow: visible; /* Allow blobs to extend to viewport edges */
 }
 
@@ -524,11 +514,13 @@ onUnmounted(() => {
   }
 }
 
-/* Hide blobs on tablet and mobile */
+.crm-benefits .container {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 1024px) {
-  .blob-layer {
-    display: none;
-  }
+  .blob-layer { display: none; }
 }
 
 /* Single column for narrow screens */
@@ -556,9 +548,8 @@ onUnmounted(() => {
     padding: 0 20px;
   }
   
+  .blob-layer { display: none; }
   .blob-left,
-  .blob-right {
-    display: none;
-  }
+  .blob-right { display: none; }
 }
 </style>

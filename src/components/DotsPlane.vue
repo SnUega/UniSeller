@@ -30,34 +30,26 @@ let COLS = 60
 let ROWS = 38
 const MAX_DISTANCE = 120
 
-// Адаптивное количество колонок - равный spacing 20px на мобильных
+const TABLET_DOT_SPACING = 28
 const getAdaptiveCols = () => {
   const width = window.innerWidth
-  if (width <= 768) {
-    // На мобильных: равный spacing 20px
-    return Math.floor(width / 20) + 1
-  }
-  if (width <= 1024) return 40
+  if (width <= 768) return Math.floor(width / 20) + 1
+  if (width <= 1024) return Math.floor(width / TABLET_DOT_SPACING) + 1
   return 60
 }
 
-// Адаптивное количество строк - равный spacing 20px на мобильных
 const getAdaptiveRows = () => {
   if (props.fullScreen) {
     const height = window.innerHeight
     const width = window.innerWidth
-    if (width <= 768) {
-      return Math.floor(height / 20) + 1
-    }
+    if (width <= 768) return Math.floor(height / 20) + 1
+    if (width <= 1024) return Math.floor(height / TABLET_DOT_SPACING) + 1
     if (height <= 900) return 32
     return 38
   }
   const width = window.innerWidth
-  if (width <= 768) {
-    // На мобильных: spacing 20px, фиксированная высота 892px
-    return Math.floor(892 / 20) + 1
-  }
-  if (width <= 1024) return 32
+  if (width <= 768) return Math.floor(892 / 20) + 1
+  if (width <= 1024) return Math.floor(892 / TABLET_DOT_SPACING) + 1
   return 38
 }
 
@@ -137,38 +129,36 @@ const handleTouchEnd = () => {
 
 const initDots = () => {
   dots.length = 0
-  
-  // На мобильных используем фиксированный интервал 20px
-  const isMobile = window.innerWidth <= 768
-  const fixedSpacing = 20
-  
+  const width = window.innerWidth
+  const isMobile = width <= 768
+  const isTablet = width > 768 && width <= 1024
+  const spacingMobile = 20
+
   if (isMobile) {
-    // На мобильных: равный интервал 20px по вертикали и горизонтали
-    COLS = Math.ceil(canvasWidth / fixedSpacing) + 1
-    ROWS = Math.ceil(canvasHeight / fixedSpacing) + 1
-    
+    COLS = Math.ceil(canvasWidth / spacingMobile) + 1
+    ROWS = Math.ceil(canvasHeight / spacingMobile) + 1
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
-        dots.push({
-          x: x * fixedSpacing,
-          y: y * fixedSpacing
-        })
+        dots.push({ x: x * spacingMobile, y: y * spacingMobile })
+      }
+    }
+  } else if (isTablet) {
+    const spacing = TABLET_DOT_SPACING
+    COLS = Math.ceil(canvasWidth / spacing) + 1
+    ROWS = Math.ceil(canvasHeight / spacing) + 1
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        dots.push({ x: x * spacing, y: y * spacing })
       }
     }
   } else {
-    // На десктопе: адаптивное количество колонок и строк
     COLS = getAdaptiveCols()
     ROWS = getAdaptiveRows()
-    
     const spacingX = canvasWidth / (COLS - 1)
     const spacingY = canvasHeight / (ROWS - 1)
-    
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
-        dots.push({
-          x: x * spacingX,
-          y: y * spacingY
-        })
+        dots.push({ x: x * spacingX, y: y * spacingY })
       }
     }
   }

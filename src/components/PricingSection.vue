@@ -10,9 +10,9 @@
     <div class="container">
       <h2 class="section-title" ref="titleRef">Выберите подходящий<br>план для вашего бизнеса</h2>
 
-      <!-- Desktop grid -->
-      <div class="pricing-grid desktop-grid" ref="pricingGridRef">
-        <div v-for="(plan, i) in plans" :key="i" class="pricing-card" :class="plan.type">
+      <div class="pricing-cards-scroll-wrap" ref="pricingScrollWrapRef">
+        <div class="pricing-grid desktop-grid" ref="pricingGridRef">
+          <div v-for="(plan, i) in plans" :key="i" class="pricing-card" :class="plan.type">
           <div class="card-top card-glow-border">
             <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
             <div class="plan-header-row">
@@ -40,8 +40,24 @@
               <span>{{ f.text }}</span>
             </li>
           </ul>
+          </div>
         </div>
       </div>
+      <!-- Подсказка под карточками (только 641–1024px): по центру, акцентный градиент, стрелка с infinite-анимацией -->
+      <p class="pricing-scroll-hint" aria-hidden="true">
+        <span class="pricing-scroll-hint-text">листайте</span>
+        <span class="pricing-scroll-hint-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pricing-hint-arrow-grad" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFD58A"/>
+                <stop offset="1" stop-color="#FFA92C"/>
+              </linearGradient>
+            </defs>
+            <path d="M6 12H18M18 12L13 7M18 12L13 17" stroke="url(#pricing-hint-arrow-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </p>
 
       <!-- Mobile slider -->
       <div class="mobile-slider-wrap">
@@ -101,6 +117,7 @@ import { animateCenterTitle, animateSlideUp, animatePricingFeatures } from '../c
 const sectionRef = ref(null)
 const titleRef = ref(null)
 const pricingGridRef = ref(null)
+const pricingScrollWrapRef = ref(null)
 
 useCardGlow({
   cardSelector: '.card-top',
@@ -110,16 +127,11 @@ const scrollY = ref(0)
 const sectionTop = ref(0)
 const isMobile = computed(() => typeof window !== 'undefined' && window.innerWidth <= 1024)
 
-// ======= Blob parallax =======
+// ======= Blob parallax (только десктоп; на планшете/мобильном отключаем — лаги и перекрытия) =======
 const blobRightStyle = computed(() => {
-  // Отключаем параллакс на мобильных для производительности
-  if (isMobile.value) {
-    return { transform: 'translateY(0px)' }
-  }
+  if (isMobile.value) return { transform: 'translateY(0px)' }
   const offset = scrollY.value - sectionTop.value
-  return {
-    transform: `translateY(${offset * 0.38}px)`
-  }
+  return { transform: `translateY(${offset * 0.38}px)` }
 })
 
 const plans = [
@@ -229,18 +241,34 @@ const onTouchEnd = (e) => {
   if (Math.abs(dx) > 50) { if (dx < 0) nextPlan(); else prevPlan() }
 }
 
+// Горизонтальный скролл планшета (641–1024): как в слайдерах — только горизонтальный жест блокирует вертикальный
+let scrollWrapTouchStartX = 0
+let scrollWrapTouchStartY = 0
+let scrollWrapSwipeDir = null
+const onScrollWrapTouchStart = (e) => {
+  scrollWrapTouchStartX = e.touches[0].clientX
+  scrollWrapTouchStartY = e.touches[0].clientY
+  scrollWrapSwipeDir = null
+}
+const onScrollWrapTouchMove = (e) => {
+  const dx = e.touches[0].clientX - scrollWrapTouchStartX
+  const dy = e.touches[0].clientY - scrollWrapTouchStartY
+  if (scrollWrapSwipeDir == null) scrollWrapSwipeDir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v'
+  // Не вызываем preventDefault: горизонтальный — нативный скролл wrap, вертикальный — скролл страницы
+}
+
 // Throttle для мобильных устройств
 let scrollTimeout = null
 let resizeTimeout = null
 
 const handleScroll = () => {
-  if (!sectionRef.value || isMobile.value) return // На мобильных не обрабатываем scroll для параллакса
+  if (!sectionRef.value || isMobile.value) return
   scrollY.value = window.scrollY
   sectionTop.value = sectionRef.value.offsetTop
 }
 
 const throttledScroll = () => {
-  if (isMobile.value) return // На мобильных не нужен параллакс
+  if (isMobile.value) return
   if (scrollTimeout) return
   scrollTimeout = requestAnimationFrame(() => {
     handleScroll()
@@ -281,19 +309,24 @@ onMounted(() => {
     sliderTrackEl.addEventListener('touchend', onTouchEnd, { passive: true })
   }
 
-  // Scroll animations — только для десктопа
-  if (!isMobile.value && pricingGridRef.value) {
+  const scrollWrap = pricingScrollWrapRef.value
+  if (scrollWrap) {
+    scrollWrap.addEventListener('touchstart', onScrollWrapTouchStart, { passive: true })
+    scrollWrap.addEventListener('touchmove', onScrollWrapTouchMove, { passive: false })
+  }
+
+  // Scroll animations — десктоп и планшет (когда видна сетка карточек, т.е. > 640px)
+  const isDesktopOrTablet = typeof window !== 'undefined' && window.innerWidth > 640
+  if (isDesktopOrTablet && pricingGridRef.value) {
     animateCenterTitle(titleRef.value)
 
     const cards = [...pricingGridRef.value.querySelectorAll('.pricing-card')]
-    // Карточки 2 и 3 (индексы 1,2) первые, затем 1 и 4 (индексы 0,3) с задержкой
     const middle = [cards[1], cards[2]].filter(Boolean)
     const outer  = [cards[0], cards[3]].filter(Boolean)
 
     animateSlideUp(middle, { triggerEl: pricingGridRef.value })
     animateSlideUp(outer,  { delay: 0.22, triggerEl: pricingGridRef.value })
 
-    // Анимация пунктов списка для каждой карточки
     cards.forEach((card, i) => {
       animatePricingFeatures(card, {
         triggerEl: pricingGridRef.value,
@@ -312,6 +345,11 @@ onUnmounted(() => {
     sliderTrackEl.removeEventListener('touchmove', onTouchMove)
     sliderTrackEl.removeEventListener('touchend', onTouchEnd)
   }
+  const scrollWrap = pricingScrollWrapRef.value
+  if (scrollWrap) {
+    scrollWrap.removeEventListener('touchstart', onScrollWrapTouchStart)
+    scrollWrap.removeEventListener('touchmove', onScrollWrapTouchMove)
+  }
 })
 </script>
 
@@ -319,6 +357,7 @@ onUnmounted(() => {
 .pricing {
   padding: 120px 0 0;
   position: relative;
+  z-index: 1;
   overflow: visible;
 }
 
@@ -326,6 +365,12 @@ onUnmounted(() => {
   max-width: 1240px;
   margin: 0 auto;
   padding: 0 20px;
+}
+
+@media (max-width: 1024px) {
+  .pricing .container {
+    padding: 0 24px;
+  }
 }
 
 .section-title {
@@ -347,6 +392,11 @@ onUnmounted(() => {
 }
 
 .mobile-slider-wrap { display: none; }
+
+/* Подсказка «листайте →» по умолчанию скрыта, показывается только в 641–1024px */
+.pricing-scroll-hint {
+  display: none;
+}
 
 /* Card base */
 .pricing-card {
@@ -681,8 +731,133 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.25);
 }
 
-/* Mobile slider */
-@media (max-width: 968px) {
+/* iPad Mini и узкие планшеты: компактная сетка 4 карточки (уменьшенные шрифты/отступы) */
+@media (min-width: 769px) and (max-width: 968px) {
+  .pricing .section-title {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  .desktop-grid {
+    gap: 12px;
+  }
+  .pricing-card.basic,
+  .pricing-card.mega {
+    height: 520px;
+  }
+  .pricing-card.popular,
+  .pricing-card.highlighted {
+    height: 555px;
+  }
+  .pricing-card.basic .card-top,
+  .pricing-card.mega .card-top {
+    height: 200px;
+    min-height: 200px;
+    padding: 20px;
+    gap: 12px;
+  }
+  .pricing-card.popular .card-top,
+  .pricing-card.highlighted .card-top {
+    height: 230px;
+    min-height: 230px;
+    padding: 20px;
+    gap: 12px;
+  }
+  .plan-name { font-size: 14px; }
+  .plan-price { font-size: 16px; }
+  .plan-orgs { font-size: 13px; }
+  .plan-badge, .plan-free { font-size: 11px; }
+  .btn-try {
+    width: 100%;
+    max-width: 180px;
+    height: 48px;
+    font-size: 14px;
+    padding: 0 20px;
+  }
+  .features-list {
+    font-size: 12px;
+    padding: 0 20px 20px;
+  }
+  .features-list li {
+    padding: 6px 0;
+    gap: 8px;
+  }
+  .feature-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+/* iPad Mini / планшет 641–1024px: подсказка под карточками по центру, зона скролла до края экрана */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .pricing .container {
+    overflow: visible;
+  }
+  .pricing-scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0 0;
+    padding: 0;
+    font-family: 'Benzin', 'Arial Black', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0.72;
+    background: linear-gradient(90deg, #FFD58A 0%, #FFA92C 50%, #FFD58A 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .pricing-scroll-hint-text {
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .pricing-scroll-hint-arrow {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    animation: pricing-hint-arrow 1.4s ease-in-out infinite;
+  }
+  .pricing-scroll-hint-arrow svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+  .pricing-cards-scroll-wrap {
+    width: calc(100% + 40px);
+    max-width: none;
+    min-width: 0;
+    margin: 0 -20px;
+    padding: 0 20px 8px;
+    box-sizing: border-box;
+    overflow-x: scroll;
+    overflow-y: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+  }
+  .pricing-cards-scroll-wrap::-webkit-scrollbar {
+    display: none;
+  }
+  .pricing-cards-scroll-wrap .desktop-grid {
+    flex: 0 0 auto;
+    min-width: 1200px;
+    margin: 0;
+  }
+}
+
+@keyframes pricing-hint-arrow {
+  0%, 100% { transform: translate(0, 1px); opacity: 0.9; }
+  50% { transform: translate(4px, 1px); opacity: 1; }
+}
+
+/* Слайдер только на узких экранах (<641px) */
+@media (max-width: 640px) {
   .desktop-grid { display: none; }
 
   .mobile-slider-wrap {
@@ -785,18 +960,18 @@ onUnmounted(() => {
   }
 }
 
-/* Hide blob on tablet and mobile */
-@media (max-width: 1024px) {
-  .blob-layer {
-    display: none;
-  }
+.pricing .container {
+  position: relative;
+  z-index: 1;
 }
 
+/* Blobs только на десктопе; на планшете/мобильном скрываем */
+@media (max-width: 1024px) {
+  .blob-layer { display: none; }
+}
 @media (max-width: 640px) {
   .pricing { padding: 80px 0 0; }
   .section-title { font-size: 22px; }
-  .blob-right {
-    display: none;
-  }
+  .blob-right { display: none; }
 }
 </style>

@@ -108,7 +108,7 @@ onUnmounted(() => {
   window.removeEventListener('wheel', onWheel)
   window.removeEventListener('scroll', onNativeScroll)
   if (scrollRafId) cancelAnimationFrame(scrollRafId)
-  if (nativeScrollTimeout) cancelAnimationFrame(nativeScrollTimeout)
+  if (nativeScrollTimeout) clearTimeout(nativeScrollTimeout)
 })
 </script>
 

@@ -432,6 +432,7 @@ onUnmounted(() => {
 .solutions {
   padding: 120px 0 80px;
   position: relative;
+  z-index: 2; /* выше секций с blobs при наложении */
   overflow: visible; /* cards bleed right */
 }
 

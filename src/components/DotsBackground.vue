@@ -68,28 +68,36 @@ const MOBILE_FPS = 30
 const FRAME_TIME = 1000 / TARGET_FPS
 const MOBILE_FRAME_TIME = 1000 / MOBILE_FPS
 
+const TABLET_DOT_SPACING = 28
+
 const initDots = (w, h) => {
   dots.length = 0
-  const isMobile = window.innerWidth <= 768
-  const fixedSpacing = 20
-  
+  const width = window.innerWidth
+  const isMobile = width <= 768
+  const isTablet = width > 768 && width <= 1024
+  const spacingMobile = 20
+
   if (isMobile) {
-    // На мобильных: равный интервал 20px по вертикали и горизонтали
-    const cols = Math.ceil(w / fixedSpacing) + 1
-    const rows = Math.ceil(h / fixedSpacing) + 1
-    
+    const cols = Math.ceil(w / spacingMobile) + 1
+    const rows = Math.ceil(h / spacingMobile) + 1
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
-        dots.push({ x: x * fixedSpacing, y: y * fixedSpacing })
+        dots.push({ x: x * spacingMobile, y: y * spacingMobile })
+      }
+    }
+  } else if (isTablet) {
+    const cols = Math.ceil(w / TABLET_DOT_SPACING) + 1
+    const rows = Math.ceil(h / TABLET_DOT_SPACING) + 1
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        dots.push({ x: x * TABLET_DOT_SPACING, y: y * TABLET_DOT_SPACING })
       }
     }
   } else {
-    // На десктопе: адаптивная сетка
     const cols = Math.ceil(w / 20) + 1
     const rows = Math.ceil(h / 20) + 1
     const sx = w / (cols - 1)
     const sy = h / (rows - 1)
-    
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         dots.push({ x: x * sx, y: y * sy })
