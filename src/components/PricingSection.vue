@@ -727,7 +727,7 @@ onUnmounted(() => {
   .mobile-slider-track {
     display: flex;
     gap: 16px;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.65s cubic-bezier(0.34, 1.3, 0.64, 1);
   }
 
   .mobile-slider-track .pricing-card {

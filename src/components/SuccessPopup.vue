@@ -13,6 +13,16 @@
 
           <!-- Animated check icon -->
           <div class="popup-icon" :class="{ 'icon-visible': iconVisible }">
+            <!-- Расходящееся кольцо (акцентный градиент, fade out) -->
+            <svg class="popup-icon-ring" width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="ring-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFD58A"/>
+                  <stop offset="1" stop-color="#FFA92C"/>
+                </linearGradient>
+              </defs>
+              <circle cx="32" cy="32" r="28" fill="none" stroke="url(#ring-grad)" stroke-width="2" stroke-opacity="0.9"/>
+            </svg>
             <svg class="check-svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
               <defs>
                 <linearGradient id="icon-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
@@ -235,6 +245,7 @@ onUnmounted(() => { stopTimer(); resetIcon() })
 
 .popup-card {
   position: relative;
+  font-family: 'PP Mori', sans-serif;
   background: rgba(25, 25, 25, 0.92);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -285,7 +296,34 @@ onUnmounted(() => { stopTimer(); resetIcon() })
   opacity: 1;
 }
 
+.popup-icon-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.popup-icon.icon-visible .popup-icon-ring {
+  animation: popup-ring-expand 0.9s ease-out forwards;
+}
+
+@keyframes popup-ring-expand {
+  from {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
 .check-svg {
+  position: relative;
+  z-index: 1;
   display: block;
   /* SVG stroke transitions handled via JS dashoffset */
 }

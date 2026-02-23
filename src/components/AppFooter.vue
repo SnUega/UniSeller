@@ -26,15 +26,6 @@
             <h2 class="cta-title">Готовы<br>к инновациям?<br>Начните свой путь<br>в CRM <img src="/src/assets/images/ico/footer-arrow.svg" alt="" class="arrow-icon" loading="lazy" /></h2>
 
             <div class="social-links desktop-social">
-              <a href="https://t.me/uniseller_io" target="_blank" rel="noopener" class="social-link" aria-label="Telegram">
-                <img src="/src/assets/images/ico/social-ico/1-tg.svg" alt="Telegram" loading="lazy" />
-              </a>
-              <a href="http://youtube.com/uniseller" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
-                <img src="/src/assets/images/ico/social-ico/2-yt.svg" alt="YouTube" loading="lazy" />
-              </a>
-              <a href="https://www.instagram.com/uniseller.io" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
-                <img src="/src/assets/images/ico/social-ico/3-insta.svg" alt="Instagram" loading="lazy" />
-              </a>
               <a href="tel:+79162178516" class="social-link social-link--phone" aria-label="Позвонить">
                 <svg class="phone-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <defs>
@@ -49,6 +40,15 @@
                   </defs>
                   <circle cx="12" cy="12" r="11" fill="url(#footer-phone-grad)" stroke="rgba(255,255,255,0.15)" stroke-width="1" mask="url(#footer-phone-mask)"/>
                 </svg>
+              </a>
+              <a href="http://youtube.com/uniseller" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
+                <img src="/src/assets/images/ico/social-ico/2-yt.svg" alt="YouTube" loading="lazy" />
+              </a>
+              <a href="https://www.instagram.com/uniseller.io" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                <img src="/src/assets/images/ico/social-ico/3-insta.svg" alt="Instagram" loading="lazy" />
+              </a>
+              <a href="https://t.me/uniseller_io" target="_blank" rel="noopener" class="social-link social-link--tg" aria-label="Telegram">
+                <img src="/src/assets/images/ico/social-ico/1-tg.svg" alt="Telegram" loading="lazy" />
               </a>
             </div>
 
@@ -165,15 +165,6 @@
           <!-- Mobile order: Social, Address, Skolkovo -->
           <div class="footer-mobile-extra">
             <div class="social-links mobile-social">
-              <a href="https://t.me/uniseller_io" target="_blank" rel="noopener" class="social-link" aria-label="Telegram">
-                <img src="/src/assets/images/ico/social-ico/1-tg.svg" alt="Telegram" loading="lazy" />
-              </a>
-              <a href="http://youtube.com/uniseller" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
-                <img src="/src/assets/images/ico/social-ico/2-yt.svg" alt="YouTube" loading="lazy" />
-              </a>
-              <a href="https://www.instagram.com/uniseller.io" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
-                <img src="/src/assets/images/ico/social-ico/3-insta.svg" alt="Instagram" loading="lazy" />
-              </a>
               <a href="tel:+79162178516" class="social-link social-link--phone" aria-label="Позвонить">
                 <svg class="phone-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <defs>
@@ -188,6 +179,15 @@
                   </defs>
                   <circle cx="12" cy="12" r="11" fill="url(#footer-phone-grad-mob)" stroke="rgba(255,255,255,0.15)" stroke-width="1" mask="url(#footer-phone-mask-mob)"/>
                 </svg>
+              </a>
+              <a href="http://youtube.com/uniseller" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
+                <img src="/src/assets/images/ico/social-ico/2-yt.svg" alt="YouTube" loading="lazy" />
+              </a>
+              <a href="https://www.instagram.com/uniseller.io" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                <img src="/src/assets/images/ico/social-ico/3-insta.svg" alt="Instagram" loading="lazy" />
+              </a>
+              <a href="https://t.me/uniseller_io" target="_blank" rel="noopener" class="social-link social-link--tg" aria-label="Telegram">
+                <img src="/src/assets/images/ico/social-ico/1-tg.svg" alt="Telegram" loading="lazy" />
               </a>
         </div>
 
@@ -747,6 +747,10 @@ onUnmounted(() => {
   display: block;
   width: 24px;
   height: 24px;
+}
+
+.social-link--tg {
+  transform: translateY(1px);
 }
 
 .footer-address {

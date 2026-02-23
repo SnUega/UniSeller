@@ -17,13 +17,13 @@
       </div>
     </div>
 
-    <!-- Slider - outside container, bleeds to right edge -->
-    <div class="slider-outer" ref="sliderEl" v-show="!isMobile.value">
+    <!-- Slider - один блок, перерасчёт шага под мобильный экран -->
+    <div class="slider-outer" ref="sliderEl">
       <div class="slider-inner-pad">
         <div
           class="slider-track"
           ref="sliderTrackRef"
-          :style="{ transform: `translateX(-${currentSlide * (cardWidth + gap)}px)` }"
+          :style="{ transform: `translateX(-${currentSlide * (effectiveCardWidth + effectiveGap)}px)` }"
         >
           <div
             v-for="(slide, i) in slides"
@@ -78,6 +78,16 @@ const currentSlide = ref(0)
 const cardWidth = 480
 const gap = 24
 const isMobile = computed(() => viewportW.value <= 640)
+
+// Ширина карточки: на мобильном — по экрану (минус отступы), на десктопе — фикс
+const effectiveCardWidth = computed(() => {
+  const vw = viewportW.value
+  if (vw <= 640) return Math.max(280, vw - 40)
+  if (vw <= 968) return 360
+  return cardWidth
+})
+
+const effectiveGap = computed(() => (viewportW.value <= 640 ? 16 : gap))
 
 const slides = [
   {
@@ -590,28 +600,6 @@ onUnmounted(() => {
   filter: brightness(0.85);
 }
 
-/* Mobile slider base styles */
-.mobile-slider-wrap {
-  display: none; /* Hidden by default, shown on mobile */
-}
-
-.mobile-slider-outer {
-  overflow: hidden;
-  border-radius: 20px;
-}
-
-.mobile-slider-track {
-  display: flex;
-  gap: 16px;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (max-width: 640px) {
-  .slider-track {
-    gap: 16px;
-  }
-}
-
 /* Cards */
 .solution-card {
   min-width: 480px;
@@ -719,62 +707,36 @@ onUnmounted(() => {
 @media (max-width: 640px) {
   .solutions { padding: 80px 0 60px; }
   
-  .slider-outer {
-    display: none;
-  }
-  .mobile-slider-wrap {
-    margin: 0 20px;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: calc(100% - 40px);
-    position: relative;
+  .slider-inner-pad {
+    margin-left: 20px;
   }
   
-  .mobile-slider-outer {
-    overflow: hidden;
-    border-radius: 20px;
-    width: 100%;
-    position: relative;
-  }
-  
-  .mobile-slider-track {
-    display: flex;
+  .slider-track {
     gap: 16px;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
   }
   
-  .mobile-slider-track .solution-card {
-    min-width: 100%;
-    flex: 0 0 100%;
-    width: 100%;
-    padding: 16px; /* Уменьшили padding (было 24px) */
-    min-height: auto; /* Убираем фиксированную высоту */
+  .solution-card {
+    min-width: calc(100vw - 40px);
+    flex: 0 0 calc(100vw - 40px);
+    padding: 16px;
   }
   
-  .mobile-slider-track .solution-card .card-image {
-    max-height: 200px; /* Ограничиваем высоту изображения */
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .solution-card .card-image {
+    max-height: 200px;
   }
   
-  .mobile-slider-track .solution-card .card-image img {
-    width: 100%;
-    height: auto;
+  .solution-card .card-image img {
     max-height: 200px;
     object-fit: contain;
   }
   
-  .mobile-slider-track .solution-card .card-title {
-    font-size: 18px; /* Уменьшаем размер заголовка */
+  .solution-card .card-title {
+    font-size: 18px;
     margin-bottom: 8px;
   }
   
-  .mobile-slider-track .solution-card .card-text {
-    font-size: 13px; /* Уменьшаем размер текста */
+  .solution-card .card-text {
+    font-size: 13px;
     line-height: 1.4;
   }
 }

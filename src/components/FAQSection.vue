@@ -11,7 +11,7 @@
     </div>
 
     <div class="container">
-      <h2 class="section-title" ref="titleRef">Ответы на наиболее часто<br>задаваемые вопросы</h2>
+      <h2 class="section-title" ref="titleRef">Ответы на наиболее часто<br class="faq-title-br"> задаваемые вопросы</h2>
 
       <div class="faq-list" ref="faqListRef">
         <div 
@@ -369,7 +369,7 @@ const enter = (element) => {
   // Force reflow
   element.offsetHeight
   requestAnimationFrame(() => {
-    element.style.transition = 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+    element.style.transition = 'height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
     element.style.height = height + 'px'
     element.style.opacity = '1'
   })
@@ -387,7 +387,7 @@ const leave = (element) => {
   // Force reflow
   element.offsetHeight
   requestAnimationFrame(() => {
-    element.style.transition = 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+    element.style.transition = 'height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
     element.style.height = '0'
     element.style.opacity = '0'
   })
@@ -449,6 +449,12 @@ const afterLeave = (element) => {
   margin-bottom: 60px;
 }
 
+@media (max-width: 768px) {
+  .section-title .faq-title-br {
+    display: none;
+  }
+}
+
 .faq-list {
   max-width: 820px;
   margin: 0 auto;
@@ -466,6 +472,7 @@ const afterLeave = (element) => {
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  backface-visibility: hidden;
 }
 
 /* Градиентная рамка — через .card-glow-border::after (useCardGlow) */
@@ -524,6 +531,7 @@ const afterLeave = (element) => {
   overflow: hidden;
   position: relative;
   z-index: 1;
+  backface-visibility: hidden;
 }
 
 .faq-answer {

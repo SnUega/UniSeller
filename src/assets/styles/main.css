@@ -56,6 +56,7 @@
 html {
   overflow-x: clip; /* clip, не hidden — не создаёт stacking context */
   overflow-y: scroll; /* Reserve scrollbar space */
+  scroll-behavior: smooth;
 }
 
 body {

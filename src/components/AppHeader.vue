@@ -1,9 +1,9 @@
 <template>
   <header class="header" ref="headerRef">
     <div class="glass-panel card-glow-border">
-      <div class="logo">
+      <a href="#" class="logo" @click.prevent="scrollToTop" aria-label="На главную">
         <img src="/src/assets/images/logo-main.png" alt="Uniseller" class="logo-img" loading="eager" />
-      </div>
+      </a>
 
       <ul class="nav-menu" :class="{ 'mobile-open': mobileMenuOpen }">
         <!-- Решения dropdown/accordion -->
@@ -147,6 +147,21 @@ const closeDropdown = (name) => {
   }
 }
 
+const scrollToTop = () => {
+  const start = window.scrollY ?? document.documentElement.scrollTop
+  const duration = 500
+  const startTime = performance.now()
+  const easeOutCubic = (t) => 1 - (1 - t) ** 3
+  const step = (now) => {
+    const elapsed = now - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    const y = start * (1 - easeOutCubic(progress))
+    window.scrollTo(0, y)
+    if (progress < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
 const handleResize = () => {
   windowWidth.value = window.innerWidth
   if (!isMobile.value) {
@@ -196,6 +211,9 @@ onUnmounted(() => {
   align-items: center;
   flex-shrink: 0;
   transform: translateY(-2.5px);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .logo-img {
@@ -474,10 +492,11 @@ onUnmounted(() => {
     position: fixed;
     top: 71px; /* 20px (header top) + 46px (glass-panel) + 5px (чуть ниже) */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(0);
+    backface-visibility: hidden;
     width: 85%; /* Уменьшили ширину (было 90%) */
     max-width: 380px; /* Уменьшили максимальную ширину (было 400px) */
-    background: rgba(25, 25, 25, 0.85); /* Усилен для лучшего блюра */
+    background: rgba(25, 25, 25, 0.98); /* Почти непрозрачная панель на мобильном */
     backdrop-filter: blur(32px) saturate(180%); /* ← УСИЛЕН БЛЮР */
     -webkit-backdrop-filter: blur(32px) saturate(180%); /* Safari поддержка */
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -508,12 +527,12 @@ onUnmounted(() => {
   @keyframes slideDown {
     from {
       opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
+      transform: translateX(-50%) translateY(-20px) translateZ(0);
       max-height: 0;
     }
     to {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) translateZ(0);
       max-height: 1000px;
     }
   }
@@ -521,12 +540,12 @@ onUnmounted(() => {
   @keyframes slideUp {
     from {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) translateZ(0);
       max-height: 1000px;
     }
     to {
       opacity: 0;
-      transform: translateX(-50%) translateY(-20px);
+      transform: translateX(-50%) translateY(-20px) translateZ(0);
       max-height: 0;
     }
   }
@@ -556,6 +575,8 @@ onUnmounted(() => {
     overflow: hidden;
     margin-top: 8px;
     margin-bottom: 8px;
+    backface-visibility: hidden;
+    transform: translateZ(0);
     /* Динамическое изменение высоты */
     transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
   }
@@ -579,14 +600,14 @@ onUnmounted(() => {
     color: rgba(255, 255, 255, 1);
   }
 
-  /* Анимация аккордеона */
+  /* Анимация аккордеона (короткие переходы на мобильном — меньше лагов) */
   .accordion-enter-active {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     max-height: 500px;
   }
 
   .accordion-leave-active {
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, max-height 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     max-height: 500px;
   }
 

@@ -8,7 +8,10 @@
     </div>
 
     <div class="container">
-      <h2 class="section-title" ref="titleRef">Продукты для роста вашего<br>бизнеса на маркетплейсах</h2>
+      <h2 class="section-title" ref="titleRef">
+        <span class="title-desktop">Продукты для роста вашего<br>бизнеса на маркетплейсах</span>
+        <span class="title-mobile">Продукты для роста<br>вашего бизнеса<br>на маркетплейсах</span>
+      </h2>
 
       <div class="products-grid">
 
@@ -215,6 +218,19 @@ onUnmounted(() => {
   text-align: center;
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 60px;
+}
+
+.title-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .title-desktop {
+    display: none;
+  }
+  .title-mobile {
+    display: block;
+  }
 }
 
 .products-grid {
