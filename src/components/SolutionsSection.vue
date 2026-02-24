@@ -394,11 +394,9 @@ onMounted(() => {
     mobileEl.addEventListener('touchend', onTouchEnd, { passive: true })
   }
 
-  // Scroll animations
   animateCenterTitle(titleRef.value)
   if (sliderTrackRef.value) {
     const cards = sliderTrackRef.value.querySelectorAll('.solution-card')
-    // Анимируем первые видимые карточки (~2-3), stagger небольшой чтобы не наезжали
     animateBubbleStagger([...cards].slice(0, 3), { triggerEl: sectionRef.value })
   }
 })
@@ -418,7 +416,6 @@ onUnmounted(() => {
     el.removeEventListener('touchmove', onTouchMove)
     el.removeEventListener('touchend', onTouchEnd)
   }
-  // Удаляем обработчики для мобильного слайдера
   const mobileEl = mobileSliderEl.value
   if (mobileEl) {
     mobileEl.removeEventListener('touchstart', onTouchStart)
@@ -432,20 +429,18 @@ onUnmounted(() => {
 .solutions {
   padding: 120px 0 80px;
   position: relative;
-  z-index: 2; /* выше секций с blobs при наложении */
-  overflow: visible; /* cards bleed right */
+  z-index: 2;
+  overflow: visible;
 }
 
-/* Dots start from SecuritySection, end below SolutionsSection header (above cards) */
 .dots-background {
   position: absolute;
-  top: 0; /* Will be set dynamically via JS to -securityHeight */
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(120px + 48px + 80px); /* Will be set dynamically via JS */
-  z-index: -1; /* Ниже контента */
+  height: calc(120px + 48px + 80px);
+  z-index: -1;
   pointer-events: none;
-  /* Плавный переход прозрачности по верхней и нижней границе */
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
@@ -489,26 +484,26 @@ onUnmounted(() => {
 
 @media (max-width: 640px) {
   .solutions-header .slider-nav {
-    display: none; /* Скрываем верхние кнопки на мобильных */
+    display: none;
   }
   
   .solutions-header {
-    justify-content: flex-start; /* Заголовок слева на мобильных */
+    justify-content: flex-start;
   }
   
   .section-title {
-    text-align: left; /* Заголовок слева на мобильных */
+    text-align: left;
   }
   
   .slider-nav-wrapper {
-    display: flex; /* Показываем нижние кнопки на мобильных */
+    display: flex;
     justify-content: center;
     margin-top: 24px;
   }
 }
 
 .slider-nav-wrapper {
-  display: none; /* Скрыто на десктопе, показывается только на мобильных */
+  display: none;
 }
 
 /* Nav buttons */
@@ -543,7 +538,6 @@ onUnmounted(() => {
   cursor: default;
 }
 
-/* Arrows — prev points RIGHT, next points LEFT (reversed) */
 .arrow-prev {
   transform: rotate(0deg);
 }
@@ -552,38 +546,25 @@ onUnmounted(() => {
   transform: rotate(180deg);
 }
 
-/* Slider bleeds to right viewport edge */
 .slider-outer {
   position: relative;
   z-index: 1;
-  /* Исправляем обрезку: используем overflow hidden для обрезки справа */
-  /* Но позволяем карточкам полностью появляться при переключении */
   overflow: hidden;
-  /* Изоляция для предотвращения глитча */
-  isolation: isolate;
-  /* Принудительная перерисовка для устранения глитча */
-  will-change: transform;
-  transform: translateZ(0);
-  /* Обрезаем только справа, но не слева - карточки могут выходить за левый край для эффекта */
-  clip-path: inset(0 -200vw 0 0); /* Обрезаем только справа, оставляем большой запас слева */
+  /* Отступы по всем сторонам для scale(1.02) активной карточки */
+  clip-path: inset(-16px -200vw -16px -16px);
 }
 
 .slider-inner-pad {
-  /* Start aligned with container left edge */
   margin-left: calc((100vw - 1240px) / 2 + 20px);
   overflow: visible;
-  /* Добавляем padding справа для того, чтобы карточки могли полностью появляться */
   padding-right: 200vw;
 }
 
 .slider-track {
   display: flex;
   gap: 24px;
-  /* Spring-like easing — небольшой overshoot при смене слайда */
   transition: transform 0.65s cubic-bezier(0.34, 1.3, 0.64, 1);
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  contain: layout style;
+  will-change: transform;
 }
 
 /* Активная карточка чуть выделяется масштабом и яркостью */
@@ -613,14 +594,6 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 12px;
   position: relative;
-  isolation: isolate; /* prevent backdrop-filter bleed / glitch on edges */
-  /* Предотвращение глитча при анимации */
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  /* Принудительная перерисовка для устранения глитча */
-  /* Убираем paint из contain, так как он может блокировать backdrop-filter */
-  contain: layout style;
 }
 
 /* Active card — kept for active state only */
@@ -714,6 +687,16 @@ onUnmounted(() => {
   
   .slider-track {
     gap: 16px;
+  }
+  
+  /* На мобиле scale(1.02) на карточке во весь экран выглядит плохо и вызывает клиппинг */
+  .solution-card.active {
+    transform: none;
+    filter: brightness(1.04);
+  }
+  .solution-card:not(.active) {
+    opacity: 0.7;
+    filter: brightness(0.88);
   }
   
   .solution-card {

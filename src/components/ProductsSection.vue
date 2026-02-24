@@ -107,7 +107,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCardGlow } from '../composables/useCardGlow.js'
-import { animateCenterTitle, animateSlideFromRight, animateSlideFromLeft, animateFeatureItems } from '../composables/useScrollAnimations.js'
+import { animateCenterTitle, animateSlideUp, animateSlideFromRight, animateSlideFromLeft, animateFeatureItems } from '../composables/useScrollAnimations.js'
 
 const sectionRef = ref(null)
 const titleRef = ref(null)
@@ -176,11 +176,19 @@ onMounted(() => {
 
   // Scroll animations
   animateCenterTitle(titleRef.value)
-  animateSlideFromRight(card1Ref.value, { triggerEl: card1Ref.value })
-  animateSlideFromLeft(card2Ref.value, { triggerEl: card2Ref.value })
-  // Пункты списка следуют направлению своей карточки
-  animateFeatureItems(card1Ref.value, { triggerEl: card1Ref.value, baseDelay: 0.3, direction: 'right' })
-  animateFeatureItems(card2Ref.value, { triggerEl: card2Ref.value, baseDelay: 0.3, direction: 'left' })
+  const isNarrowMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+  if (isNarrowMobile) {
+    // На мобильных — обе карточки fade снизу вверх (без слайда с боков)
+    const cards = [card1Ref.value, card2Ref.value].filter(Boolean)
+    animateSlideUp(cards, { triggerEl: card1Ref.value, stagger: 0.15 })
+    animateFeatureItems(card1Ref.value, { triggerEl: card1Ref.value, baseDelay: 0.3, direction: 'right' })
+    animateFeatureItems(card2Ref.value, { triggerEl: card2Ref.value, baseDelay: 0.3, direction: 'left' })
+  } else {
+    animateSlideFromRight(card1Ref.value, { triggerEl: card1Ref.value })
+    animateSlideFromLeft(card2Ref.value, { triggerEl: card2Ref.value })
+    animateFeatureItems(card1Ref.value, { triggerEl: card1Ref.value, baseDelay: 0.3, direction: 'right' })
+    animateFeatureItems(card2Ref.value, { triggerEl: card2Ref.value, baseDelay: 0.3, direction: 'left' })
+  }
 })
 
 onUnmounted(() => {

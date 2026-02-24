@@ -902,12 +902,34 @@ onUnmounted(() => {
   .mobile-slider-track {
     display: flex;
     gap: 16px;
-    transition: transform 0.65s cubic-bezier(0.34, 1.3, 0.64, 1);
+    /* Без overshoot — при spring easing карточка выходит за пределы overflow:hidden
+       и border-radius обрезает её по горизонтали, создавая глитч-линию посередине */
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* translateZ создаёт единый GPU-слой для всего трека — устраняет split-глитч */
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   .mobile-slider-track .pricing-card {
     min-width: 100%;
     flex: 0 0 100%;
+    /* Единый backdrop-filter на всей карточке вместо двух отдельных (card-top + features-list)
+       которые создают два GPU слоя с видимым стыком при анимации */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 24px;
+    overflow: hidden; /* clip child elements to card bounds */
+  }
+
+  /* Отключаем отдельные backdrop-filter на мобиле — всё рендерится в одном слое */
+  .mobile-slider-track .card-top {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .mobile-slider-track .features-list {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .btn-try {
